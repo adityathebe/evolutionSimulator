@@ -1,5 +1,6 @@
 # Evolution Simulator
 
-[x] Neural Network
-[] Genetic Algorithm
+- [x] Neural Network
+- [ ] Genetic Algorithm
+- [ ] Physics Environment
 
