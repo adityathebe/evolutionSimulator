@@ -8,7 +8,7 @@ class Person {
 		this.lower_width = lower_width;
 		this.upper_left_leg = Matter.Bodies.rectangle(x, y, upper_width, upper_length, {
 			friction: 0.8,
-			restitution: 0.5,
+			restitution: 0.2,
 			collisionFilter: {
 				mask: 0x0001,
 			}
@@ -18,18 +18,18 @@ class Person {
 				mask: 0x0001,
 			},
 			friction: 0.8,
-			restitution: 0.5
+			restitution: 0.2
 		});
 		this.upper_right_leg = Matter.Bodies.rectangle(x, y, upper_width, upper_length, {
 			friction: 0.8,
-			restitution: 0.5,
+			restitution: 0.2,
 			collisionFilter: {
 				mask: 0x0002,
 			}
 		});
 		this.lower_right_leg = Matter.Bodies.rectangle(x, y + upper_length, lower_width, lower_length, {
 			friction: 0.8,
-			restitution: 0.5,
+			restitution: 0.2,
 			collisionFilter: {
 				category: 0x0002
 			}
