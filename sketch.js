@@ -14,7 +14,7 @@ function setup() {
 
 	// Create Person
 	for (let index = 0; index < 20; index++) {
-		let person = new Person(30, 5, 30, 5, width * 0.10, height * 0.75);
+		let person = new Person(50, 10, 50, 10, width * 0.10, height * 0.80);
 		person.init();
 		creatures.push(person);
 	}
@@ -119,7 +119,7 @@ function keyPressed() {
 	// Press SpaceBar to exert small force to all creatures
 	if (key === " ") {
 		creatures.forEach((person) => {
-			Matter.Body.applyForce(person.upper_left_leg, { x: 0, y: 0 }, { x: 0.001, y: 0 })
+			Matter.Body.applyForce(person.upper_left_leg, { x: 0, y: 0 }, { x: -0.001, y: 0 })
 		})
 	}
 

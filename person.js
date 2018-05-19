@@ -175,7 +175,7 @@ class Person {
 	walk() {
 		setInterval(() => {
 			this.think()
-		}, 500)
+		}, 200)
 	}
 }
 
