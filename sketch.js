@@ -12,9 +12,9 @@ function setup() {
 	frameRate(60);
 	rectMode(CENTER);
 
-	// Create Person
-	for (let index = 0; index < 20; index++) {
-		let person = new Person(50, 10, 50, 10, width * 0.10, height * 0.80);
+	// Create Creatures
+	for (let index = 0; index < 10; index++) {
+		let person = new Person(50, 10, 50, 6, width * 0.10, height * 0.80);
 		person.init();
 		creatures.push(person);
 	}
@@ -36,7 +36,6 @@ function setup() {
 		}
 	});
 
-	// Left Wall
 	left_wall = Matter.Bodies.rectangle(10, height/2, 20, height, {
 		isStatic: true,
 		friction: 0.8,
@@ -45,7 +44,6 @@ function setup() {
 		}
 	});
 
-	// Left Wall
 	right_wall = Matter.Bodies.rectangle(width - 10, height / 2, 20, height, {
 		isStatic: true,
 		friction: 0.8,
@@ -76,7 +74,6 @@ function setup() {
 		mouse: canvasMouse
 	})
 	Matter.World.add(world, m);
-
 	
 	// Run the renderer
 	// let render = Render.create({
@@ -123,8 +120,8 @@ function keyPressed() {
 		})
 	}
 
-	// Press W to activate Neural Network
-	if (key === "W") {
+	// Press Enter to activate Neural Network
+	if (keyCode === ENTER) {
 		creatures.forEach((person) => {
 			person.walk();
 		})

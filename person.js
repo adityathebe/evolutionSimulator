@@ -99,28 +99,28 @@ class Person {
 	}
 
 	show() {
-		fill('green')
+		fill(color(154, 10, 10, 160))
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.upper_left_leg.vertices[i].x, this.upper_left_leg.vertices[i].y);
 		}
 		endShape();
 
-		fill('red')
+		fill(color(255,255,10, 160))
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.upper_right_leg.vertices[i].x, this.upper_right_leg.vertices[i].y);
 		}
 		endShape();
 
-		fill('green');
+		fill(color(154, 10, 10, 160))
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.lower_left_leg.vertices[i].x, this.lower_left_leg.vertices[i].y);
 		}
 		endShape();
-		fill('red')
 
+		fill(color(255,255,10, 160))
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.lower_right_leg.vertices[i].x, this.lower_right_leg.vertices[i].y);
@@ -130,26 +130,20 @@ class Person {
 
 	// Movements
 	move_m1(change) {
-		let max = (this.upper_length / 2) + (this.lower_length / 2);
-		let temp = this.main_muscle.length + (change * max);
-		if (temp >= max) return false;
-		if (temp <= 0.01) return false;
+		let max = this.upper_length;
+		let temp = change * max * 0.80;
 		this.main_muscle.length = temp
 	}
 
 	move_m2(change) {
 		let max = (this.upper_length / 2) + (this.lower_length / 2);
-		let temp = this.left_muscle.length + ( change * max );
-		if (temp <= 0.01) return false;
-		if (temp >= max) return false;
+		let temp = change * max * 0.80 + ( max * 0.20 );
 		this.left_muscle.length = temp;
 	}
 
 	move_m3(change) {
 		let max = (this.upper_length / 2) + (this.lower_length / 2)
-		let temp = this.right_muscle.length + (change * max);
-		if (temp <= 0.01) return false;
-		if (temp >= max) return false;
+		let temp = change * max * 0.80 + ( max * 0.20 );
 		this.right_muscle.length = temp;
 	}
 
@@ -168,16 +162,13 @@ class Person {
 		this.move_m2(result[1])
 		this.move_m3(result[2])
 
-		// console.log(input)
-		console.log(result)
+		// console.log(input);
+		// console.log(result);
 	}
 
 	walk() {
 		setInterval(() => {
 			this.think()
-		}, 200)
+		}, 100)
 	}
 }
-
-
-ground.position.y - ((creatures[0].upper_left_leg.position.y + creatures[0].upper_right_leg.position.y + creatures[0].lower_right_leg.position.y + creatures[0].lower_left_leg.position.y) / 4)
