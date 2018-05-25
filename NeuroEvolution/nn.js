@@ -13,10 +13,14 @@ class NeuralNetwork {
     }
 
     predict(user_input) {
-        /* Takes a 1D array */
-        let input_layer = tf.tensor(user_input, [1, this.input_nodes]);
-        let hidden_layer = input_layer.matMul(this.input_weights).sigmoid();
-        let output_layer = hidden_layer.matMul(this.output_weights).sigmoid();
-        return output_layer;
+        let output;
+        tf.tidy(() => {
+            /* Takes a 1D array */
+            let input_layer = tf.tensor(user_input, [1, this.input_nodes]);
+            let hidden_layer = input_layer.matMul(this.input_weights).sigmoid();
+            let output_layer = hidden_layer.matMul(this.output_weights).sigmoid();
+            output = output_layer.dataSync();
+        });
+        return output;
     }
 }

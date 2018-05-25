@@ -1,80 +1,38 @@
 let person;
-let ground, roof;
-let left_wall, right_wall;
+let boundary;
 let creatures = []
 
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
+let generation = new Generation(10);
 
 function setup() {
 	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
 	frameRate(60);
 	rectMode(CENTER);
+	textSize(25)
+	fill(255);
 
-	// Create Creatures
-	for (let index = 0; index < 10; index++) {
-		let person = new Person(50, 10, 50, 6, width * 0.10, height * 0.80);
-		person.init();
-		creatures.push(person);
-	}
+	// Initialize Generation
+	generation.initialize(Person);
+	generation.species.forEach((creature) => { creature.add_to_world(world) });
 
-	// Boundaries
-	ground = Matter.Bodies.rectangle(width / 2, height - 10, width, 20, {
-		isStatic: true,
-		friction: 0.8,
-		collisionFilter: {
-			category: 0x0001
-		}
-	});
-
-	roof = Matter.Bodies.rectangle(width / 2, 10, width, 20, {
-		isStatic: true,
-		friction: 0.8,
-		collisionFilter: {
-			category: 0x0001
-		}
-	});
-
-	left_wall = Matter.Bodies.rectangle(10, height/2, 20, height, {
-		isStatic: true,
-		friction: 0.8,
-		collisionFilter: {
-			category: 0x0001
-		}
-	});
-
-	right_wall = Matter.Bodies.rectangle(width - 10, height / 2, 20, height, {
-		isStatic: true,
-		friction: 0.8,
-		collisionFilter: {
-			category: 0x0001
-		}
-	});
-
-	Matter.World.add(world, [ground, roof, left_wall, right_wall]);
-	creatures.forEach((person) => {
-		Matter.World.add(world, [person.lower_left_leg, person.upper_left_leg, person.lower_right_leg, person.upper_right_leg]);
-		
-		// Add Main Joints
-		Matter.World.add(world, person.left_joint)
-		Matter.World.add(world, person.right_joint)
-		Matter.World.add(world, person.main_joint)
-
-		// Add Muscle Joints
-		Matter.World.add(world, person.main_muscle)
-		Matter.World.add(world, person.left_muscle)
-		Matter.World.add(world, person.right_muscle)
-	})
+	// Boundary
+	boundary = new SimpleBoundary();
+	boundary.add_to_world();
 
 	// Mouse Constraint
 	let canvasMouse = Matter.Mouse.create(canvas.elt);
 	canvasMouse.pixelRatio = pixelDensity();
-	let m = Matter.MouseConstraint.create(engine, {
-		mouse: canvasMouse
-	})
+	let m = Matter.MouseConstraint.create(engine, { mouse: canvasMouse });
 	Matter.World.add(world, m);
-	
+
+	// Restart Generation after 5 seconds
+	setInterval(() => {
+		generation.evolve();
+	}, 15000);
+
 	// Run the renderer
 	// let render = Render.create({
 	// 	element: document.body,
@@ -95,18 +53,20 @@ function setup() {
 function draw() {
 	background(color(15, 15, 19));
 
-	// Display Ground
-	fill(color(118, 240, 155))
-	rect(ground.position.x, ground.position.y, width, 20);
-	rect(left_wall.position.x, left_wall.position.y, 20, height);
-	rect(right_wall.position.x, right_wall.position.y, 20, height);
-	rect(roof.position.x, roof.position.y, width, 20);
+	// Display Boundary
+	boundary.display();
 
-	// Display Person
-	fill("#F55F5F")
-	creatures.forEach((person) => {
-		person.show();
-	})
+	// Display Creatures
+	generation.species.forEach((creature) => {
+		creature.show();
+		creature.adjust_score();
+		creature.think(boundary);
+	});
+
+	// Display Stats
+	fill("red");
+	text("Generation: " + generation.generation, 40, 70);
+	text("HighScore: " + generation.high_score.toFixed(2), 40, 100);
 
 	// Run Matter-JS Engine
 	Matter.Engine.update(engine);
@@ -115,14 +75,14 @@ function draw() {
 function keyPressed() {
 	// Press SpaceBar to exert small force to all creatures
 	if (key === " ") {
-		creatures.forEach((person) => {
+		generation.species.forEach((person) => {
 			Matter.Body.applyForce(person.upper_left_leg, { x: 0, y: 0 }, { x: -0.001, y: 0 })
 		})
 	}
 
 	// Press Enter to activate Neural Network
 	if (keyCode === ENTER) {
-		creatures.forEach((person) => {
+		generation.species.forEach((person) => {
 			person.walk();
 		})
 	}
