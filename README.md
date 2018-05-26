@@ -3,8 +3,8 @@
 # Evolution Simulator
 
 - [x] Neural Network
-- [ ] Genetic Algorithm
-- [ ] Physics Environment
+- [ x] Genetic Algorithm
+- [x ] Physics Environment
 
 # Project Structure
 

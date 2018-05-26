@@ -10,11 +10,12 @@ class Generation {
 
     initialize(Creature) {
         for (let i = 0; i < this.population; i++) {
-            let new_creature = new Creature({upper_length: 50, 
-                upper_width: 10, 
-                lower_length: 50,
+            let new_creature = new Creature({
+                upper_length: 30, 
+                upper_width: 8, 
+                lower_length: 30,
                 lower_width: 6,
-                x: width * 0.10, 
+                x: width * 0.15, 
                 y: height * 0.85 });
             this.species.push(new_creature);
         }
