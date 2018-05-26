@@ -5,7 +5,7 @@ let creatures = []
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
-let generation = new Generation(10);
+let generation = new Generation(20);
 
 function setup() {
 	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
@@ -31,7 +31,7 @@ function setup() {
 	// Restart Generation after 5 seconds
 	setInterval(() => {
 		generation.evolve();
-	}, 15000);
+	}, 20 * 1000);
 
 	// Run the renderer
 	// let render = Render.create({
@@ -67,6 +67,7 @@ function draw() {
 	fill("red");
 	text("Generation: " + generation.generation, 40, 70);
 	text("HighScore: " + generation.high_score.toFixed(2), 40, 100);
+	text("Fitness: " + generation.fitness.toFixed(2), 40, 130);
 
 	// Run Matter-JS Engine
 	Matter.Engine.update(engine);
@@ -75,6 +76,7 @@ function draw() {
 function keyPressed() {
 	// Press SpaceBar to exert small force to all creatures
 	if (key === " ") {
+		generation.evolve();
 		generation.species.forEach((person) => {
 			Matter.Body.applyForce(person.upper_left_leg, { x: 0, y: 0 }, { x: -0.001, y: 0 })
 		})

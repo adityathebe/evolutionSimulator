@@ -16,7 +16,7 @@ class Person {
 				mask: 0x0001,
 			}
 		});
-		this.lower_left_leg = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
+		this.lower_left_leg = Matter.Bodies.rectangle(params.x * 0.45, params.y + params.upper_length, params.lower_width, params.lower_length, {
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
@@ -108,20 +108,8 @@ class Person {
 	}
 
 	kill(world) {
-		Matter.World.remove(world, this.upper_right_leg);
-		Matter.World.remove(world, this.upper_left_leg);
-		Matter.World.remove(world, this.lower_left_leg);
-		Matter.World.remove(world, this.lower_right_leg);
-
-		// Remove Joints
-		Matter.World.remove(world, this.left_joint);
-		Matter.World.remove(world, this.right_joint);
-		Matter.World.remove(world, this.main_joint);
-		
-		// Remove Muscles
-		Matter.World.remove(world, this.main_muscle);
-		Matter.World.remove(world, this.left_muscle);
-		Matter.World.remove(world, this.right_muscle);
+		Matter.World.remove(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg,
+		this.left_joint, this.right_joint, this.main_joint, this.main_muscle, this.left_muscle, this.right_muscle]);
 
 		// Dispose the tensors in its brain
 		this.brain.input_weights.dispose();
@@ -129,20 +117,9 @@ class Person {
 	}
 
 	add_to_world(world) {
-		Matter.World.add(world, this.upper_right_leg);
-		Matter.World.add(world, this.upper_left_leg);
-		Matter.World.add(world, this.lower_left_leg);
-		Matter.World.add(world, this.lower_right_leg);
-
-		// Remove Joints
-		Matter.World.add(world, this.left_joint);
-		Matter.World.add(world, this.right_joint);
-		Matter.World.add(world, this.main_joint);
-
-		// Remove Muscles
-		Matter.World.add(world, this.main_muscle);
-		Matter.World.add(world, this.left_muscle);
-		Matter.World.add(world, this.right_muscle);
+		Matter.World.add(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg]);
+		Matter.World.add(world, [this.left_joint, this.right_joint, this.main_joint]);
+		Matter.World.add(world, [this.main_muscle, this.left_muscle, this.right_muscle]);
 	}
 
 	show() {
@@ -153,7 +130,7 @@ class Person {
 		}
 		endShape();
 
-		fill(color(255,255,10, 160))
+		fill(color(255, 255, 10, 160))
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.upper_right_leg.vertices[i].x, this.upper_right_leg.vertices[i].y);
@@ -167,7 +144,7 @@ class Person {
 		}
 		endShape();
 
-		fill(color(255,255,10, 160))
+		fill(color(255, 255, 10, 160))
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.lower_right_leg.vertices[i].x, this.lower_right_leg.vertices[i].y);
@@ -184,19 +161,19 @@ class Person {
 
 	move_m2(change) {
 		let max = (this.upper_length / 2) + (this.lower_length / 2);
-		let temp = change * max * 0.80 + ( max * 0.20 );
+		let temp = change * max * 0.80 + (max * 0.20);
 		this.left_muscle.length = temp;
 	}
 
 	move_m3(change) {
 		let max = (this.upper_length / 2) + (this.lower_length / 2)
-		let temp = change * max * 0.80 + ( max * 0.20 );
+		let temp = change * max * 0.80 + (max * 0.20);
 		this.right_muscle.length = temp;
 	}
 
 	adjust_score() {
 		let score = this.upper_left_leg.position.x - this.x;
-		this.score = score > 0 ? score : 0;
+		this.score = score > 0 ? score : 1;
 	}
 
 	think(boundary) {
@@ -230,10 +207,12 @@ class Person {
 
 		let ih = this.brain.input_weights.dataSync().map(fn);
 		let ih_shape = this.brain.input_weights.shape;
+		this.brain.input_weights.dispose();
 		this.brain.input_weights = tf.tensor(ih, ih_shape);
-
+		
 		let ho = this.brain.output_weights.dataSync().map(fn);
 		let ho_shape = this.brain.output_weights.shape;
+		this.brain.output_weights.dispose();
 		this.brain.output_weights = tf.tensor(ho, ho_shape);
 	}
 
@@ -248,6 +227,7 @@ class Person {
 			child_dna.push(parents[select][i]);
 		}
 		let child = this.clone();
+		child.brain.input_weights.dispose();
 		child.brain.input_weights = tf.tensor(child_dna, this.brain.input_weights.shape);
 		return child;
 	}

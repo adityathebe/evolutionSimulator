@@ -5,18 +5,17 @@ class Generation {
         this.generation = 1;
         this.high_score = 0;
         this.total_score = 0;
-        this.last_gen = [];
+        this.fitness = 0;
     }
 
     initialize(Creature) {
         for (let i = 0; i < this.population; i++) {
-            let y = Math.random() * width;
             let new_creature = new Creature({upper_length: 50, 
                 upper_width: 10, 
                 lower_length: 50,
                 lower_width: 6,
                 x: width * 0.10, 
-                y: height * 0.80 });
+                y: height * 0.85 });
             this.species.push(new_creature);
         }
     }
@@ -41,6 +40,7 @@ class Generation {
         // Calculate Total Score of this Generation
         let total_score = 0;
         this.species.forEach((creature) => { total_score += creature.score });
+        this.fitness = total_score / this.population;
 
         // Store New Childs Temporarily in this array
         let new_generation = [];
@@ -53,9 +53,9 @@ class Generation {
             new_generation.push(child);
 
             parentA.brain.input_weights.dispose();
+            parentB.brain.input_weights.dispose(); 
             parentA.brain.output_weights.dispose();
             parentB.brain.output_weights.dispose();
-            parentB.brain.input_weights.dispose(); 
         }
 
         // Kill Current Generation and add new children to the current generation
