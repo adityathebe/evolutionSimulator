@@ -84,7 +84,7 @@ function draw() {
 	text("Average Score " + generation.avg_score.toFixed(2), 40, 90);
 	text("Population: " + generation.population, 40, 110);
 	text("Generation Period: " + generationPeriod + " seconds", 40, 130);
-	text("Mutation Rate: " + 10 + "%", 40, 150);
+	text("Mutation Rate: " + 5 + "%", 40, 150);
 	text("Progress: " + generation.progress.toFixed(2), 40, 170);
 	
 	// Display Inheritance
