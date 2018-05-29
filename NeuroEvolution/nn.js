@@ -23,4 +23,18 @@ class NeuralNetwork {
         });
         return output;
     }
+
+    clone() {
+        let clonie = new NeuralNetwork(this.input_nodes, this.hidden_nodes, this.output_nodes);
+        clonie.dispose();
+        clonie.input_weights = tf.clone(this.input_weights);
+        clonie.output_weights = tf.clone(this.output_weights);
+        return clonie;
+    }
+
+    // Dispose the input and output weights
+    dispose() {
+        this.input_weights.dispose();
+        this.output_weights.dispose();
+    }
 }

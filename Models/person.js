@@ -1,16 +1,20 @@
 class Person {
 	constructor(params) {
+		this.id = params.id;
 		this.upper_length = params.upper_length;
 		this.upper_width = params.upper_width;
 		this.lower_length = params.lower_length;;
 		this.lower_width = params.lower_width;
-		this.score = 1;
-		this.x = params.x;
-		this.y = params.y;
+		this.score = 0;
+		this.fitness = 0;
+		this.parents = [];
+		this.colors = [];
+		this.params = params;
+		this.brain = new NeuralNetwork(4, 100, 2);
 		this.upper_left_leg = Matter.Bodies.rectangle(params.x, params.y, params.upper_width, params.upper_length, {
 			friction: 0.8,
 			restitution: 0.1,
-			density: 0.01,
+			density: 0.05,
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
@@ -22,40 +26,34 @@ class Person {
 				mask: 0x0001,
 			},
 			friction: 0.8,
-			density: 0.01,
+			density: 0.05,
 			restitution: 0.1,
 		});
-		this.upper_right_leg = Matter.Bodies.rectangle(params.x + 5, params.y, params.upper_width, params.upper_length, {
+		this.upper_right_leg = Matter.Bodies.rectangle(params.x - 1, params.y, params.upper_width, params.upper_length, {
 			friction: 0.8,
 			restitution: 0.1,
-			density: 0.01,
+			density: 0.05,
 			collisionFilter: {
 				category: 0x0004,
 				mask: 0x0001,
 			}
 		});
-		this.lower_right_leg = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
+		this.lower_right_leg = Matter.Bodies.rectangle(params.x , params.y + params.upper_length, params.lower_width, params.lower_length, {
 			friction: 0.8,
 			restitution: 0.1,
-			density: 0.01,
+			density: 0.05,
 			collisionFilter: {
 				category: 0x0004,
 				mask: 0x0001,
 			}
 		});
-		this.params = params;
-
-		// Neural Network
-		if (params.brain) {
-			this.brain = params.brain;
-		} else {
-			this.brain = new NeuralNetwork(4, 15, 3);;
-		}
 
 		this.init();
 	}
-
+	
 	init() {
+		let selected_color = color(Math.random() * 255, Math.random() * 255, Math.random() * 255);
+		this.colors = [selected_color, selected_color];
 
 		this.left_joint = Matter.Constraint.create({
 			bodyA: this.upper_left_leg,
@@ -107,15 +105,6 @@ class Person {
 		});
 	}
 
-	kill(world) {
-		Matter.World.remove(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg,
-		this.left_joint, this.right_joint, this.main_joint, this.main_muscle, this.left_muscle, this.right_muscle]);
-
-		// Dispose the tensors in its brain
-		this.brain.input_weights.dispose();
-		this.brain.output_weights.dispose();
-	}
-
 	add_to_world(world) {
 		Matter.World.add(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg]);
 		Matter.World.add(world, [this.left_joint, this.right_joint, this.main_joint]);
@@ -123,28 +112,28 @@ class Person {
 	}
 
 	show() {
-		fill(color(154, 10, 10, 160))
+		fill(this.colors[0])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.upper_left_leg.vertices[i].x, this.upper_left_leg.vertices[i].y);
 		}
 		endShape();
 
-		fill(color(255, 255, 10, 160))
+		fill(this.colors[1])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.upper_right_leg.vertices[i].x, this.upper_right_leg.vertices[i].y);
 		}
 		endShape();
 
-		fill(color(154, 10, 10, 160))
+		fill(this.colors[0])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.lower_left_leg.vertices[i].x, this.lower_left_leg.vertices[i].y);
 		}
 		endShape();
 
-		fill(color(255, 255, 10, 160))
+		fill(this.colors[1])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
 			vertex(this.lower_right_leg.vertices[i].x, this.lower_right_leg.vertices[i].y);
@@ -172,8 +161,8 @@ class Person {
 	}
 
 	adjust_score() {
-		let score = this.upper_left_leg.position.x - this.x;
-		this.score = score > 0 ? score : 1;
+		let score = this.upper_left_leg.position.x ;
+		this.score = score > 0 ? score : 0.001;
 	}
 
 	think(boundary) {
@@ -186,13 +175,25 @@ class Person {
 
 		let result = this.brain.predict(input);
 
-		this.move_m1(result[0]);
-		this.move_m2(result[1]);
-		this.move_m3(result[2]);
+		// this.move_m1(result[0]);
+		this.move_m2(result[0]);
+		this.move_m3(result[1]);
 	}
 
 	clone() {
-		return new Person(this.params);
+		let params = Object.assign({}, this.params);
+		let new_person = new Person(params);
+		new_person.brain.dispose();
+		new_person.brain = this.brain.clone();
+		return new_person;
+	}
+
+	kill(world) {
+		Matter.World.remove(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg,
+		this.left_joint, this.right_joint, this.main_joint, this.main_muscle, this.left_muscle, this.right_muscle]);
+
+		// Dispose its brain
+		this.brain.dispose();
 	}
 
 	mutate() {
@@ -218,32 +219,23 @@ class Person {
 
 	crossover(partner) {
 		let parentA_in_dna = this.brain.input_weights.dataSync();
-		let parentB_in_dna = partner.brain.input_weights.dataSync();
-		let parents_in_dna = [parentA_in_dna, parentB_in_dna];
-
-		let child_in_dna = [];
-		for (let i = 0; i < parentA_in_dna.length; i++) {
-			let select = Math.floor(Math.random() * 2);
-			child_in_dna.push(parents_in_dna[select][i]);
-		}
-
 		let parentA_out_dna = this.brain.output_weights.dataSync();
+		let parentB_in_dna = partner.brain.input_weights.dataSync();
 		let parentB_out_dna = partner.brain.output_weights.dataSync();
-		let parents_out_dna = [parentA_out_dna, parentB_out_dna];
 
-		let child_out_dna = [];
-		for (let i = 0; i < parentA_out_dna.length; i++) {
-			let select = Math.floor(Math.random() * 2);
-			child_out_dna.push(parents_out_dna[select][i]);
-		}
+		let mid = Math.floor(Math.random() * parentA_in_dna.length);
+		let child_in_dna = [...parentA_in_dna.slice(0, mid), ...parentB_in_dna.slice(mid, parentB_in_dna.length)];		
+		let child_out_dna = [...parentA_out_dna.slice(0, mid), ...parentB_out_dna.slice(mid, parentB_out_dna.length)];
 
 		let child = this.clone();
 		let input_shape = this.brain.input_weights.shape;
 		let output_shape = this.brain.output_weights.shape;
-		child.brain.input_weights.dispose();
-		child.brain.output_weights.dispose();
+		
+		child.brain.dispose();
+
 		child.brain.input_weights = tf.tensor(child_in_dna, input_shape);
 		child.brain.output_weights = tf.tensor(child_out_dna, output_shape);
+		
 		return child;
 	}
 
@@ -257,9 +249,11 @@ class Person {
 function muscleMapper (change) {
 	if (change > 1) return null;
 
-	if (change < 0.2) return 0.2 ;
-	else if (change < 0.4) return 0.4;
-	else if (change < 0.6) return 0.6;
-	else if (change < 0.8) return 0.8;
-	else if (change < 1) return 0.95;
+	if (change < 0.5) return 0.5 ;
+	else return 1;
+	// if (change < 0.2) return 0.2 ;
+	// else if (change < 0.4) return 0.4;
+	// else if (change < 0.6) return 0.6;
+	// else if (change < 0.8) return 0.8;
+	// else if (change < 1) return 0.95;
 }
