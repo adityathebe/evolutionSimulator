@@ -10,8 +10,7 @@ let generation = new Generation(25);
 let settled = false;
 
 function setup() {
-	let canvas = createCanvas(1200, 600);
-	// let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
+	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
 	frameRate(60);
 	rectMode(CENTER);
 	textSize(18)
@@ -88,15 +87,16 @@ function draw() {
 	text("Progress: " + generation.progress.toFixed(2), 40, 170);
 	
 	// Display Inheritance
-	textSize(12);
+	textSize(14);
 	fill('green');
+	text("Creature\tParentA\t\tParentB", width * 0.78, 40)
 	generation.species.forEach((creature, index) => {
 		let txt = '';
 		if (creature.parents.length !== 0)
-			txt = `${creature.id} : ${creature.parents[0].id} (${creature.parents[0].score.toFixed(0)}) \t\t\t ${creature.parents[1].id}(${creature.parents[1].score.toFixed(0)})`;
+			txt = `${creature.id} \t\t\t ${creature.parents[0].id} (${creature.parents[0].score.toFixed(0)}) \t\t\t ${creature.parents[1].id}(${creature.parents[1].score.toFixed(0)})`;
 		else
-			txt = `${creature.id} : ------ + ------`
-		text(txt, width * 0.80, 40 + (13 * index));
+			txt = `${creature.id} \t\t\t ------ \t\t\t ------`
+		text(txt, width * 0.80, 60 + (15 * index));
 	})
 
 	// Run Matter-JS Engine
