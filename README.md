@@ -1,6 +1,6 @@
 # [DEMO](https://adityathebe.github.io/evolutionSimulator/)
     
-# Evolution Simulator
+# Evolution Simulator [Under Development]
 
 - [x] Neural Network
 - [x] Genetic Algorithm
@@ -53,3 +53,32 @@ Two creatures (*parents*) are selected using the selection algorithm. Their weig
 *The objective of this function is to introduce randomness in the population by tweaking the weights in the Neural network (brain) of a creature.*
 
 This function accepts a mutation rate as its parameter. The mutation rate, which is usually about 1 - 2%, is in fact the probability of introduction of randomness.
+
+# Things to Improve
+
+## 1. Sudden Muscle Movement
+
+The muscles are controlled by the brain (*Neural Network*) of the creature. Each output of the neural network lies within the range of the sigmoid function, *i.e. [0, 1] and* maps to a certain muscle. Output value 1 indicates maximum muscle extension and 0 indicates maximum contraction. Due to this, subtle muscle movement is not possible. 
+
+Consider, at time "*t",* one of the output nodes of the neural network is **1**. This will lead to full extension of the respective muscle (as an analogy, ***state 5** in the picture below*). Then at next instant "*t + 1*", the value of the same output node is **0 (*state 1*)**. Now, the currently fully flexed muscle will instantly get fully contracted (***from state 5 to state 1)***. This unnatural movement is not continuous and will exert immense force to the creature resulting in unwanted behavior. We want a continous movement that goes from state 5 to 4 to 3 and so on to state 1.
+
+![](https://i.imgur.com/G5gcddL.jpg)
+
+Due to this large spectrum of possible output states, the network takes a very long time to learn the movements. In fact the current topology ( *3 layer network* ) of the network might not even be sufficient to handle it.
+
+### Possible Solution
+
+- **Quantized Movement**: 
+Allow only fixed possible extension of the muscle like in the picture above. This will reduce the learning time of the network. However, sudden movements might still be a problem.
+- **Implement resting muscle length**:
+Currently, the creatures don't have a fixed structure since their muscles don't have a resting length. There's no tendency of the muscles to stretch or contract to certain natural length; it is just a rigid connector.
+By making the muscles "*spring-like"*, we can define the structure of the creatures. This is a better and more natural model of the muscles.
+
+## 2. Sloppy Fitness Function
+
+The first creature design successfully found a way to get to the right side of the screen despite its very sloppy and unnatural movement. This was because the creature was rewarded for the amount of distance it traveled towards right. There was no reward for staying up ( *keeping balance* ).
+
+![](https://imgur.com/udPqUGm.gif) 
+![](https://imgur.com/Khb27YD.gif)
+
+This led to another problem. The creatures focused more on balancing than on walking.
