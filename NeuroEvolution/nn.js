@@ -23,7 +23,6 @@ class NeuralNetwork {
      * Takes in a 1D array and feed forwards through the network
      * @param {array} - Array of inputs
      */
-
     predict(user_input) {
         let output;
         tf.tidy(() => {
@@ -54,5 +53,33 @@ class NeuralNetwork {
     dispose() {
         this.input_weights.dispose();
         this.output_weights.dispose();
+    }
+
+    /**
+     * Save as JSON
+     */
+    toJson() {
+        let json_data = {
+            input_nodes : this.input_nodes,
+            hidden_nodes: this.hidden_nodes,
+            output_nodes: this.output_nodes,
+            input_weights: this.input_weights.dataSync(),
+            output_weights: this.output_weights.dataSync()
+        }
+        return JSON.stringify(json_data);
+    }
+
+    /**
+     * Load model from JSON
+     * @param {json} json_data
+     */
+    loadFromJson(json_data) {
+        this.input_nodes = json_data.input_nodes;
+        this.hidden_nodes = json_data.hidden_nodes;
+        this.output_nodes = json_data.output_nodes;
+        let input_weights = Object.values(json_data.input_weights);
+        let output_weights = Object.values(json_data.output_weights);
+        this.input_weights = tf.tensor(input_weights, [json_data.input_nodes, json_data.hidden_nodes]);
+        this.output_weights = tf.tensor(output_weights, [json_data.hidden_nodes, json_data.output_nodes]);
     }
 }

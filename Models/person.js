@@ -24,7 +24,7 @@ class Person {
 				mask: 0x0001,
 			}
 		});
-		this.lower_left_leg = Matter.Bodies.rectangle(params.x , params.y + params.upper_length, params.lower_width, params.lower_length, {
+		this.lower_left_leg = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
@@ -42,7 +42,7 @@ class Person {
 				mask: 0x0001,
 			}
 		});
-		this.lower_right_leg = Matter.Bodies.rectangle(params.x , params.y + params.upper_length, params.lower_width, params.lower_length, {
+		this.lower_right_leg = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
 			friction: 0.8,
 			restitution: 0.1,
 			density: 0.05,
@@ -54,7 +54,7 @@ class Person {
 
 		this.init();
 	}
-	
+
 	init() {
 		let selected_color = color(Math.random() * 255, Math.random() * 255, Math.random() * 255);
 		this.colors = [selected_color, selected_color];
@@ -165,8 +165,17 @@ class Person {
 	}
 
 	adjust_score() {
-		let score = this.upper_left_leg.position.x ;
-		this.score = score > 0 ? score : 0.001;
+
+		// Walking Score
+		let w_score = this.upper_left_leg.position.x - this.upper_left_leg.positionPrev.x;
+
+		// Balancing Score
+		let balanced = this.upper_left_leg.position.y < this.lower_left_leg.position.y
+			&& this.upper_right_leg.position.y < this.lower_right_leg.position.y;
+
+		// Summarize score
+		this.score = this.upper_left_leg.position.x
+		// this.score += w_score * (balanced ? 1 : 0.50) + (balanced ? 0.1 : 0);
 	}
 
 	think(boundary) {
@@ -202,7 +211,7 @@ class Person {
 
 	mutate() {
 		function fn(x) {
-			if (random(1) < 0.05) {
+			if (random(1) < 0.1) {
 				let offset = randomGaussian() * 0.5;
 				let newx = x + offset;
 				return newx;
@@ -214,7 +223,7 @@ class Person {
 		let ih_shape = this.brain.input_weights.shape;
 		this.brain.input_weights.dispose();
 		this.brain.input_weights = tf.tensor(ih, ih_shape);
-		
+
 		let ho = this.brain.output_weights.dataSync().map(fn);
 		let ho_shape = this.brain.output_weights.shape;
 		this.brain.output_weights.dispose();
@@ -228,18 +237,18 @@ class Person {
 		let parentB_out_dna = partner.brain.output_weights.dataSync();
 
 		let mid = Math.floor(Math.random() * parentA_in_dna.length);
-		let child_in_dna = [...parentA_in_dna.slice(0, mid), ...parentB_in_dna.slice(mid, parentB_in_dna.length)];		
+		let child_in_dna = [...parentA_in_dna.slice(0, mid), ...parentB_in_dna.slice(mid, parentB_in_dna.length)];
 		let child_out_dna = [...parentA_out_dna.slice(0, mid), ...parentB_out_dna.slice(mid, parentB_out_dna.length)];
 
 		let child = this.clone();
 		let input_shape = this.brain.input_weights.shape;
 		let output_shape = this.brain.output_weights.shape;
-		
+
 		child.brain.dispose();
 
 		child.brain.input_weights = tf.tensor(child_in_dna, input_shape);
 		child.brain.output_weights = tf.tensor(child_out_dna, output_shape);
-		
+
 		return child;
 	}
 
@@ -251,13 +260,13 @@ class Person {
 }
 
 /**
- * Quantizes the muslce movement.
+ * Quantizes the muscle movement.
  * @param {number} change - Accepts number between 0 and 1
  * @returns {number} Returns either 0.5 or 1.
  */
-function muscleMapper (change) {
+function muscleMapper(change) {
 	if (change > 1) return null;
-	if (change < 0.5) return 0.5 ;
+	if (change < 0.5) return 0.5;
 	else return 1;
 
 	// if (change < 0.33) return 0.33 ;

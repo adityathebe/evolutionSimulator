@@ -21,7 +21,6 @@ class Generation {
      * Initalize the Generation with creatures
      * @param {object}
      */
-
     initialize(Creature) {
         for (let i = 0; i < this.population; i++) {
             let new_creature = new Creature({
@@ -41,7 +40,6 @@ class Generation {
      * Picks one creature from the population
      * @returns A creature
      */
-
     pickOne() {
         let index = 0;
         let r = Math.random();
@@ -101,5 +99,21 @@ class Generation {
         for (let i = 0; i < this.population; i++) {
             this.species[i].add_to_world(world);
         }
+    }
+
+    /**
+     * Returns the creature with the current highest score
+     * @returns {Creature}
+     */
+    getBest() {
+        let max = 0;
+        let max_index = 0;
+        this.species.forEach((creature, index) => {
+            if (max < creature.score) {
+                max = creature.score;
+                max_index = index;
+            }
+        });
+        return generation.species[max_index];
     }
 }
