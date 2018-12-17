@@ -40,7 +40,7 @@ class SimpleBoundary {
   /**
    * Adds the current boundary to MatterJS World
    */
-  add_to_world(world) {
+  addToWorld(world) {
     Matter.World.add(world, [this.ground, this.roof, this.left_wall, this.right_wall]);
   }
 }

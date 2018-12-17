@@ -1,25 +1,26 @@
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
+let leggy, boundary;
 
 function setup() {
 	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
 
 	// Initialize Generation
-	const leggy = new Leggy({
-		upper_length: 30,
-		upper_width: 8,
-		lower_length: 30,
-		lower_width: 6,
+	leggy = new Leggy({
+		upper_length: 60,
+		upper_width: 20,
+		lower_length: 50,
+		lower_width: 15,
 		x: width * 0.15,
-		y: height * 0.85,
+		y: height * 0.50,
 		id: 1
 	});
 	leggy.addToWorld(world);
 
 	// Boundary
-	const boundary = new SimpleBoundary();
-	boundary.add_to_world(world);
+	boundary = new SimpleBoundary();
+	boundary.addToWorld(world);
 
 	// Run Engine
 	Matter.Engine.run(engine);

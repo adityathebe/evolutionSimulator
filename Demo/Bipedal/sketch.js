@@ -20,7 +20,7 @@ function setup() {
 
 	// Boundary
 	const boundary = new SimpleBoundary();
-	boundary.add_to_world(world);
+	boundary.addToWorld(world);
 
 	// Run Engine
 	Matter.Engine.run(engine);

@@ -23,13 +23,15 @@ class Generation {
    */
   initialize(Creature, option) {
     for (let i = 0; i < this.population; i++) {
-      let new_creature = new Creature(option);
-      this.species.push(new_creature);
+      let newCreature = new Creature(option);
+      newCreature.id = i;
+      this.species.push(newCreature);
     }
   }
 
   /**
    * Picks one creature from the population
+   * based on fitness
    * @returns A creature
    */
   pickOne() {
@@ -64,25 +66,24 @@ class Generation {
       this.species[i].fitness = this.species[i].score / total_score;
     };
 
-    // Store new generation temporarily in this array
-    let new_generation = [];
-
     // Breeding
+    let new_generation = [];
     for (let i = 0; i < this.population; i++) {
       let parentA = this.pickOne();
       let parentB = this.pickOne();
       let child = parentA.crossover(parentB);
       child.mutate();
       child.id = i;
-      child.params.id = i;
-      child.parents = [{ id: parentA.id, score: this.species[parentA.id].score }, { id: parentB.id, score: this.species[parentB.id].score }];
       new_generation.push(child);
+
+      console.log(`[${parentA.id}(${this.species[parentA.id].fitness.toFixed(2)}), ${parentB.id}(${this.species[parentB.id].fitness.toFixed(2)})] => ${i}`)
     }
 
     // Kill Current Generation.
     // i.e. Remove their bodies from MatterJS World and dispose their brain
     for (let i = 0; i < this.population; i++) {
       this.species[i].removeFromWorld(world);
+      this.species[i].brain.dispose();
     }
 
     // Add new children to the current generation

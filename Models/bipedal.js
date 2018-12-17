@@ -1,22 +1,22 @@
 class Bipedal {
-  constructor(params) {
-    this.id = params.id;
-    this.leftLegLength = params.leftLegLength;
-    this.leftLegWidth = params.leftLegWidth;
-    this.rightLegLength = params.rightLegLength;;
-    this.rightLegWidth = params.rightLegWidth;
-    this.bodyLength = params.bodyLength;
-    this.bodyWidth = params.bodyWidth;
-    this.params = params;
+  constructor(params = {}) {
+    this.id = params.id || 0;
+    this.leftLegLength = params.leftLegLength || 60;
+    this.leftLegWidth = params.leftLegWidth || 10;
+    this.rightLegLength = params.rightLegLength || 60;
+    this.rightLegWidth = params.rightLegWidth || 10;
+    this.bodyLength = params.bodyLength || 100;
+    this.bodyWidth = params.bodyWidth || 20;
+    this.posX = params.posX || width * 0.1;
+    this.posY = params.posY || height * 0.80;
     this.score = 0;
     this.fitness = 0;
-    this.parents = [];
     this.brain = new NeuralNetwork(10, 25, 2);
 
     ////////////////
     // Body parts //
     ////////////////
-    this.leftLeg = Matter.Bodies.rectangle(params.posX - 75, params.posY + 40, params.leftLegLength, params.leftLegWidth, {
+    this.leftLeg = Matter.Bodies.rectangle(this.posX - 75, this.posY + 40, this.leftLegLength, this.leftLegWidth, {
       friction: 0.8,
       restitution: 0.1,
       density: 0.05,
@@ -27,7 +27,7 @@ class Bipedal {
       // isStatic: true,
     });
 
-    this.rightLeg = Matter.Bodies.rectangle(params.posX + 80, params.posY + 40, params.rightLegLength, params.rightLegWidth, {
+    this.rightLeg = Matter.Bodies.rectangle(this.posX + 80, this.posY + 40, this.rightLegLength, this.rightLegWidth, {
       friction: 0.8,
       restitution: 0.1,
       density: 0.05,
@@ -38,7 +38,7 @@ class Bipedal {
       // isStatic: true,
     });
 
-    this.body = Matter.Bodies.rectangle(params.posX, params.posY, params.bodyLength, params.bodyWidth, {
+    this.body = Matter.Bodies.rectangle(this.posX, this.posY, this.bodyLength, this.bodyWidth, {
       friction: 0.8,
       restitution: 0.1,
       density: 0.05,
@@ -122,21 +122,37 @@ class Bipedal {
     this.brain.dispose();
   }
 
+
+  /**
+   * Returns an object of with all the parameters required to create a new Bipedal
+   * @returns {Object}
+   */
+  getParams() {
+    return Object.assign({}, {
+      id: this.id,
+      leftLegLength: this.leftLegLength,
+      leftLegWidthleftLegLength: this.leftLegWidthleftLegLength,
+      rightLegLengthleftLegLength: this.rightLegLengthleftLegLength,
+      rightLegWidthleftLegLength: this.rightLegWidthleftLegLength,
+      bodyLengthleftLegLength: this.bodyLengthleftLegLength,
+      bodyWidthleftLegLength: this.bodyWidthleftLegLength,
+      posXleftLegLength: this.posXleftLegLength,
+      posYleftLegLength: this.posYleftLegLength,
+    });
+  }
+
   clone() {
-    let params = Object.assign({}, this.params);
-    let bipedal = new Bipedal(params);
-    bipedal.brain.dispose();
+    let bipedal = new Bipedal(this.getParams());
     bipedal.brain = this.brain.clone();
     return bipedal;
   }
 
-
   adjustScore() {
-    // Blancing score (Head should be level)
-    const isHeadBalanced = Math.abs(this.body.angle) < 0.2;
-    const walkingScore = this.body.position.x - this.params.posX;
+    // Balancing score (Head should be level)
+    const isHeadBalanced = Math.abs(this.body.angle) < 0.20;
+    const walkingScore = this.body.position.x - this.posX;
     const velocity = this.body.velocity.x;
-    this.score += walkingScore * (isHeadBalanced ? 2 : 0.1) * velocity;
+    this.score += walkingScore * (isHeadBalanced ? 2 : 0.5) * velocity;
   }
 
   think(boundary) {

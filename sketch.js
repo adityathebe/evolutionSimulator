@@ -1,4 +1,3 @@
-let person;
 let boundary;
 let creatures = []
 
@@ -12,22 +11,12 @@ function setup() {
 	let canvas = createCanvas(windowWidth, windowHeight);
 
 	// Initialize Generation
-	generation.initialize(Bipedal, {
-		id: 1,
-		leftLegLength: 60,
-		rightLegLength: 60,
-		bodyLength: 100,
-		leftLegWidth: 10,
-		rightLegWidth: 10,
-		bodyWidth: 20,
-		posX: width * 0.1,
-		posY: height * 0.80,
-	});
+	generation.initialize(Bipedal);
 	generation.species.forEach((creature) => { creature.addToWorld(world) });
 
 	// Boundary
 	boundary = new SimpleBoundary();
-	boundary.add_to_world(world);
+	boundary.addToWorld(world);
 
 	// Run Engine
 	Matter.Engine.run(engine);
@@ -59,7 +48,7 @@ function setup() {
 		mouse: renderMouse
 	}));
 
-	// Think every 50ms
+	// Think every 50 ms
 	setInterval(() => {
 		generation.species.forEach((creature) => {
 			creature.think(boundary);

@@ -11,7 +11,6 @@ class Person {
 		this.lower_width = params.lower_width;
 		this.score = 0;
 		this.fitness = 0;
-		this.parents = [];
 		this.colors = [];
 		this.params = params;
 		this.brain = new NeuralNetwork(4, 10, 2);

@@ -1,3 +1,5 @@
+let staticVar = false;
+
 class Leggy {
 	/**
 	 * Takes in a object with properties : id, x, y upper_length, lower_length, upper_width, lower_width,
@@ -11,20 +13,20 @@ class Leggy {
 		this.lower_width = params.lower_width;
 		this.score = 0;
 		this.fitness = 0;
-		this.parents = [];
 		this.colors = [];
 		this.params = params;
 		this.brain = new NeuralNetwork(4, 10, 2);
-		this.upper_left_leg = Matter.Bodies.rectangle(params.x, params.y, params.upper_width, params.upper_length, {
+		this.upperLeftLeg = Matter.Bodies.rectangle(params.x, params.y, params.upper_width, params.upper_length, {
 			friction: 0.8,
 			restitution: 0.1,
 			density: 0.05,
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
-			}
+			},
+			isStatic: staticVar,
 		});
-		this.lower_left_leg = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
+		this.lowerLeftLeg = Matter.Bodies.rectangle(params.x * 0.90, params.y, params.lower_width, params.lower_length, {
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
@@ -32,29 +34,23 @@ class Leggy {
 			friction: 0.8,
 			density: 0.05,
 			restitution: 0.1,
+			isStatic: staticVar,
 		});
-		this.upper_right_leg = Matter.Bodies.rectangle(params.x - 1, params.y, params.upper_width, params.upper_length, {
+		this.upperRightLeg = Matter.Bodies.rectangle(params.x, params.y, params.upper_width, params.upper_length, {
 			friction: 0.8,
 			restitution: 0.1,
+			isStatic: staticVar,
 			density: 0.05,
 			collisionFilter: {
 				category: 0x0004,
 				mask: 0x0001,
 			}
 		});
-		this.lower_right_leg = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
+		this.lowerRightLeg = Matter.Bodies.rectangle(params.x, params.y, params.lower_width, params.lower_length, {
 			friction: 0.8,
 			restitution: 0.1,
 			density: 0.05,
-			collisionFilter: {
-				category: 0x0004,
-				mask: 0x0001,
-			}
-		});
-		this.back_bone = Matter.Bodies.rectangle(params.x, params.y + params.upper_length, params.lower_width, params.lower_length, {
-			friction: 0.8,
-			restitution: 0.1,
-			density: 0.05,
+			isStatic: staticVar,
 			collisionFilter: {
 				category: 0x0004,
 				mask: 0x0001,
@@ -69,8 +65,8 @@ class Leggy {
 		this.colors = [selected_color, selected_color];
 
 		this.left_joint = Matter.Constraint.create({
-			bodyA: this.upper_left_leg,
-			bodyB: this.lower_left_leg,
+			bodyA: this.upperLeftLeg,
+			bodyB: this.lowerLeftLeg,
 			pointA: { x: 0, y: this.upper_length / 2 },
 			pointB: { x: 0, y: -this.upper_length / 2 },
 			length: 0,
@@ -78,8 +74,8 @@ class Leggy {
 		});
 
 		this.right_joint = Matter.Constraint.create({
-			bodyA: this.upper_right_leg,
-			bodyB: this.lower_right_leg,
+			bodyA: this.upperRightLeg,
+			bodyB: this.lowerRightLeg,
 			pointA: { x: 0, y: this.upper_length / 2 },
 			pointB: { x: 0, y: -this.upper_length / 2 },
 			length: 0,
@@ -87,33 +83,33 @@ class Leggy {
 		});
 
 		this.main_joint = Matter.Constraint.create({
-			bodyA: this.upper_left_leg,
-			bodyB: this.upper_right_leg,
+			bodyA: this.upperLeftLeg,
+			bodyB: this.upperRightLeg,
 			pointA: { x: 0, y: -this.upper_length / 2 },
 			pointB: { x: 0, y: -this.upper_length / 2 },
 			length: 0,
-			stiffness: 1,
+			stiffness: 0.,
 		});
 
 		// Muscle Joints
 		this.main_muscle = Matter.Constraint.create({
-			bodyA: this.upper_left_leg,
-			bodyB: this.upper_right_leg,
+			bodyA: this.upperLeftLeg,
+			bodyB: this.upperRightLeg,
 			length: (this.upper_length / 2),
 			stiffness: 1,
 		});
 
 		this.left_muscle = Matter.Constraint.create({
-			bodyA: this.upper_left_leg,
-			bodyB: this.lower_left_leg,
-			length: (this.upper_length / 3) + (this.lower_length / 3),
+			bodyA: this.upperLeftLeg,
+			bodyB: this.lowerLeftLeg,
+			length: ((this.upper_length / 3) + (this.lower_length / 3)) * 1.5,
 			stiffness: 1
 		});
 
 		this.right_muscle = Matter.Constraint.create({
-			bodyA: this.upper_right_leg,
-			bodyB: this.lower_right_leg,
-			length: (this.upper_length / 3) + (this.lower_length / 3),
+			bodyA: this.upperRightLeg,
+			bodyB: this.lowerRightLeg,
+			length: 1.5 * ((this.upper_length / 3) + (this.lower_length / 3)),
 			stiffness: 1
 		});
 	}
@@ -123,8 +119,9 @@ class Leggy {
 	 * @param {Matter.World} world 
 	 */
 	addToWorld(world) {
-		Matter.World.add(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg, this.back_bone]);
-		Matter.World.add(world, [this.left_joint, this.right_joint, this.main_joint]);
+		Matter.World.add(world, [this.upperRightLeg, this.upperLeftLeg, this.lowerLeftLeg, this.lowerRightLeg]);
+		Matter.World.add(world, [this.main_joint]);
+		Matter.World.add(world, [this.left_joint, this.right_joint]);
 		Matter.World.add(world, [this.main_muscle, this.left_muscle, this.right_muscle]);
 	}
 
@@ -133,7 +130,7 @@ class Leggy {
 	 * @param {Matter.World} world 
 	 */
 	removeFromWorld(world) {
-		Matter.World.remove(world, [this.upper_right_leg, this.upper_left_leg, this.lower_left_leg, this.lower_right_leg,
+		Matter.World.remove(world, [this.upperRightLeg, this.upperLeftLeg, this.lowerLeftLeg, this.lowerRightLeg,
 		this.left_joint, this.right_joint, this.main_joint, this.main_muscle, this.left_muscle, this.right_muscle]);
 
 		// Dispose its brain
@@ -145,65 +142,37 @@ class Leggy {
 		fill(this.colors[0])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
-			vertex(this.upper_left_leg.vertices[i].x, this.upper_left_leg.vertices[i].y);
+			vertex(this.upperLeftLeg.vertices[i].x, this.upperLeftLeg.vertices[i].y);
 		}
 		endShape();
 
 		fill(this.colors[1])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
-			vertex(this.upper_right_leg.vertices[i].x, this.upper_right_leg.vertices[i].y);
+			vertex(this.upperRightLeg.vertices[i].x, this.upperRightLeg.vertices[i].y);
 		}
 		endShape();
 
 		fill(this.colors[0])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
-			vertex(this.lower_left_leg.vertices[i].x, this.lower_left_leg.vertices[i].y);
+			vertex(this.lowerLeftLeg.vertices[i].x, this.lowerLeftLeg.vertices[i].y);
 		}
 		endShape();
 
 		fill(this.colors[1])
 		beginShape();
 		for (let i = 0; i < 4; i++) {
-			vertex(this.lower_right_leg.vertices[i].x, this.lower_right_leg.vertices[i].y);
+			vertex(this.lowerRightLeg.vertices[i].x, this.lowerRightLeg.vertices[i].y);
 		}
 		endShape();
 	}
 
-	///////////////
-	// Movements //
-	///////////////
-	move_m1(change) {
-		let max = this.upper_length;
-		let temp = muscleMapper(change) * max;
-		this.main_muscle.length = temp
-	}
-
-	move_m2(change) {
-		let max = (this.upper_length / 2) + (this.lower_length / 2);
-		let temp = muscleMapper(change) * max;
-		this.left_muscle.length = temp;
-	}
-
-	move_m3(change) {
-		let max = (this.upper_length / 2) + (this.lower_length / 2)
-		let temp = muscleMapper(change) * max;
-		this.right_muscle.length = temp;
-	}
-
-	adjust_score() {
-
-		// Walking Score
-		let w_score = this.upper_left_leg.position.x - this.upper_left_leg.positionPrev.x;
-
-		// Balancing Score
-		let balanced = this.upper_left_leg.position.y < this.lower_left_leg.position.y
-			&& this.upper_right_leg.position.y < this.lower_right_leg.position.y;
-
-		// Summarize score
-		this.score = this.upper_left_leg.position.y
-		// this.score += w_score * (balanced ? 1 : 0.50) + (balanced ? 0.1 : 0);
+	adjustScore() {
+		const walkingScore = this.upperLeftLeg.position.x - this.params.x;
+		const isBalanced = this.upperLeftLeg.position.y < this.lowerLeftLeg.position.y
+			&& this.upperRightLeg.position.y < this.lowerRightLeg.position.y;
+		this.score += walkingScore * (isBalanced ? 1 : 0.50);
 	}
 
 	///////////////////////////
@@ -211,17 +180,28 @@ class Leggy {
 	///////////////////////////
 	think(boundary) {
 		let ground = boundary.ground;
-		let distance_from_ground = ground.position.y - ((this.upper_left_leg.position.y + this.upper_right_leg.position.y + this.lower_right_leg.position.y + this.lower_left_leg.position.y) / 4)
-		let torque = this.upper_left_leg.angularVelocity + this.upper_right_leg.angularVelocity + this.lower_right_leg.angularVelocity + this.lower_left_leg.angularVelocity;
-		let vx = this.upper_left_leg.velocity.x + this.upper_right_leg.velocity.x + this.lower_right_leg.velocity.x + this.lower_left_leg.velocity.x;
-		let vy = this.upper_left_leg.velocity.y + this.upper_right_leg.velocity.y + this.lower_right_leg.velocity.y + this.lower_left_leg.velocity.y;
+		let distance_from_ground = ground.position.y - ((this.upperLeftLeg.position.y + this.upperRightLeg.position.y + this.lowerRightLeg.position.y + this.lowerLeftLeg.position.y) / 4)
+		let torque = this.upperLeftLeg.angularVelocity + this.upperRightLeg.angularVelocity + this.lowerRightLeg.angularVelocity + this.lowerLeftLeg.angularVelocity;
+		let vx = this.upperLeftLeg.velocity.x + this.upperRightLeg.velocity.x + this.lowerRightLeg.velocity.x + this.lowerLeftLeg.velocity.x;
+		let vy = this.upperLeftLeg.velocity.y + this.upperRightLeg.velocity.y + this.lowerRightLeg.velocity.y + this.lowerLeftLeg.velocity.y;
 		let input = [distance_from_ground / width, vx / 4, vy / 4, torque / 4];
 
 		let result = this.brain.predict(input);
+		
+		// Move Muscles
+		const mainMuscleShift = result[0] > 0.5 ? 3 : -3;
+		const leftMuscleShift = result[0] > 0.5 ? 3 : -3;
+		const rightMuscleShift = result[1] > 0.5 ? 3 : -3;
 
-		// this.move_m1(result[0]);
-		this.move_m2(result[0]);
-		this.move_m3(result[1]);
+		if (this.left_muscle.length + leftMuscleShift < 50 && this.left_muscle.length + leftMuscleShift > 15)
+			this.left_muscle.length += leftMuscleShift;
+		if (this.right_muscle.length + rightMuscleShift < 50 && this.right_muscle.length + rightMuscleShift  > 15)
+			this.right_muscle.length += rightMuscleShift;
+		if (this.main_muscle.length + mainMuscleShift < 35 && this.main_muscle.length + mainMuscleShift > 10)
+			this.main_muscle.length += mainMuscleShift;
+
+		// Adjust Score
+		this.adjustScore()
 	}
 
 	mutate() {
@@ -269,10 +249,10 @@ class Leggy {
 
 	clone() {
 		let params = Object.assign({}, this.params);
-		let new_person = new Person(params);
-		new_person.brain.dispose();
-		new_person.brain = this.brain.clone();
-		return new_person;
+		let leggy = new Leggy(params);
+		leggy.brain.dispose();
+		leggy.brain = this.brain.clone();
+		return leggy;
 	}
 
 	walk() {
