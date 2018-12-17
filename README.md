@@ -83,4 +83,4 @@ The first creature design successfully found a way to get to the right side of t
 
 This led to another problem. The creatures focused more on balancing than on walking.
 
-In addition to that, the fitness was calculated only at the end of generation which doesn't reward the learning process but just the final state. Due to this limitation, the creature will never evolve to jump and optimize its "walking" strategy.
+In addition to that, the fitness is calculated only at the end of generation which doesn't reward the learning process but just the final state. Due to this limitation, the creature will never evolve to jump and also optimize its "walking" strategy.

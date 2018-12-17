@@ -1,4 +1,4 @@
-class Person {
+class Leggy {
 	/**
 	 * Takes in a object with properties : id, x, y upper_length, lower_length, upper_width, lower_width,
 	 * @constructor
