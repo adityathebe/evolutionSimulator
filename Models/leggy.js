@@ -12,7 +12,7 @@ class Leggy {
 		this.backboneLength = params.backboneLength || 60;
 		this.footLength = 10;
 		this.footWidth = 20;
-		this.handWidth = 40;
+		this.handWidth = 30;
 		this.handLength = 10;
 		this.score = 0;
 		this.fitness = 0;
@@ -21,7 +21,7 @@ class Leggy {
 		this.brain = new NeuralNetwork(20, 50, 6);
 		this.legBodyMuscleRestLength = Math.sqrt((this.backboneWidth * this.backboneWidth) + (this.upperLength * this.upperLength))
 
-		this.leftHand = Matter.Bodies.rectangle(160, 455, this.handWidth, this.handLength, {
+		this.leftHand = Matter.Bodies.rectangle(145, 455, this.handWidth, this.handLength, {
 			friction: 1,
 			slop: 0,
 			restitution: 0.01,
@@ -33,7 +33,7 @@ class Leggy {
 			isStatic: staticVar,
 		});
 
-		this.rightHand = Matter.Bodies.rectangle(160, 455, this.handWidth, this.handLength, {
+		this.rightHand = Matter.Bodies.rectangle(145, 455, this.handWidth, this.handLength, {
 			friction: 1,
 			slop: 0,
 			restitution: 0.01,
@@ -49,7 +49,7 @@ class Leggy {
 			friction: 1,
 			slop: 0,
 			restitution: 0.01,
-			density: 0.1,
+			density: 1,
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
@@ -61,7 +61,7 @@ class Leggy {
 			friction: 1,
 			slop: 0,
 			restitution: 0.01,
-			density: 0.1,
+			density: 1,
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
@@ -142,6 +142,7 @@ class Leggy {
 			pointB: { x: -this.handWidth / 2, y: 0 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: false },
 		});
 
 		this.rightHandJoint = Matter.Constraint.create({
@@ -151,6 +152,7 @@ class Leggy {
 			pointB: { x: -this.handWidth / 2, y: 0 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: false },
 		});
 
 		this.leftFootJoint = Matter.Constraint.create({
@@ -159,6 +161,7 @@ class Leggy {
 			pointA: { x: -this.footWidth / 2, y: 0 },
 			pointB: { x: 0, y: this.lowerLength / 2 },
 			length: 0,
+			render: { visible: false },
 			stiffness: 1,
 		});
 
@@ -169,6 +172,7 @@ class Leggy {
 			pointB: { x: 0, y: this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: false },
 		});
 
 		this.leftLegJoint = Matter.Constraint.create({
@@ -178,6 +182,7 @@ class Leggy {
 			pointB: { x: 0, y: -this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: true },
 		});
 
 		this.rightLegJoint = Matter.Constraint.create({
@@ -187,6 +192,7 @@ class Leggy {
 			pointB: { x: 0, y: -this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: true },
 		});
 
 		this.leftMainJoint = Matter.Constraint.create({
@@ -196,6 +202,7 @@ class Leggy {
 			pointB: { x: 0, y: -this.upperLength / 2 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: false },
 		});
 
 		this.rightMainJoint = Matter.Constraint.create({
@@ -205,6 +212,7 @@ class Leggy {
 			pointB: { x: 0, y: -this.upperLength / 2 },
 			length: 0,
 			stiffness: 1,
+			render: { visible: false },
 		});
 	}
 
@@ -437,7 +445,7 @@ class Leggy {
 		const bodyLeftLegShift = result[2] > 0.5 ? 2 : -2;
 		const bodyRightLegShift = result[3] > 0.5 ? 2 : -2;
 		const leftHandShift = result[4] > 0.5 ? 2 : -2;
-		const rightHandShift = result[5] > 0.5 ? 2 : -2;
+		const rightHandShift = result[5] > 0.5 ? 1 : -1;
 
 		if (this.leftMuscle.length + leftMuscleShift <= 45 && this.leftMuscle.length + leftMuscleShift >= 25)
 			this.leftMuscle.length += leftMuscleShift;
@@ -447,9 +455,9 @@ class Leggy {
 			this.bodyLeftLegMuscle.length += bodyLeftLegShift;
 		if (this.bodyRightLegMuscle.length + bodyRightLegShift <= 60 && this.bodyRightLegMuscle.length + bodyRightLegShift >= 30)
 			this.bodyRightLegMuscle.length += bodyRightLegShift;
-		if (this.leftHandMuscle.length + leftHandShift <= 30 && this.leftHandMuscle.length + leftHandShift >= 15)
+		if (this.leftHandMuscle.length + leftHandShift <= 35 && this.leftHandMuscle.length + leftHandShift >= 20)
 			this.leftHandMuscle.length += leftHandShift;
-		if (this.rightHandMuscle.length + rightHandShift <= 30 && this.rightHandMuscle.length + rightHandShift >= 15)
+		if (this.rightHandMuscle.length + rightHandShift <= 35 && this.rightHandMuscle.length + rightHandShift >= 20)
 			this.rightHandMuscle.length += rightHandShift;
 		// Adjust Score
 		this.adjustScore()
