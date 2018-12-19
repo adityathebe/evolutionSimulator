@@ -7,6 +7,7 @@ class SimpleBoundary {
     this.ground = Matter.Bodies.rectangle(width / 2, height - 15, width, 50, {
       isStatic: true,
       friction: 1,
+      restitution: 0.1,
       collisionFilter: {
         category: 0x0001
       }

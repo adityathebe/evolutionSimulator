@@ -4,11 +4,11 @@ let creatures = []
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
-const generationPeriod = 25;
+const generationPeriod = 20;
 let generation = new Generation(20);
 
 function setup() {
-	let canvas = createCanvas(windowWidth, windowHeight);
+	let canvas = createCanvas(1240, 600);
 
 	// Initialize Generation
 	generation.initialize(Leggy);
@@ -22,12 +22,12 @@ function setup() {
 	Matter.Engine.run(engine);
 
 	// Restart Generation after certain seconds
-	let settled = false;
-	setTimeout(() => settled = true, 1000);
+	let hasCreatureSettled = false;
+	setTimeout(() => hasCreatureSettled = true, 1000);
 	setInterval(() => {
-		settled = false;
+		hasCreatureSettled = false;
 		generation.evolve();
-		setTimeout(() => settled = true, 1000);
+		setTimeout(() => hasCreatureSettled = true, 1000);
 	}, generationPeriod * 1000);
 
 	// Run the renderer
@@ -35,7 +35,9 @@ function setup() {
 		engine: engine,
 		element: document.body,
 		options: {
-			height, width
+			height, 
+			width,
+			wireframes: false,
 		}
 	});
 	Render.run(render);
@@ -55,7 +57,7 @@ function setup() {
 	// Think every 80 ms
 	setInterval(() => {
 		generation.species.forEach((creature) => {
-			if (settled) creature.think(boundary);
+			if (hasCreatureSettled) creature.think(boundary);
 		});
 	}, 80)
 }

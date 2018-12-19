@@ -1,27 +1,78 @@
 let staticVar = false;
 
 class Leggy {
-	
+
 	constructor(params = {}) {
 		this.id = params.id || 0;
-		this.upper_length = params.upper_length || 40;
-		this.upper_width = params.upper_width || 15;
-		this.lower_length = params.lower_length || 30;
-		this.lower_width = params.lower_width || 10;
+		this.upperLength = params.upperLength || 40;
+		this.upperWidth = params.upperWidth || 15;
+		this.lowerLength = params.lowerLength || 30;
+		this.lowerWidth = params.lowerWidth || 10;
 		this.backboneWidth = params.backboneWidth || 30;
 		this.backboneLength = params.backboneLength || 60;
-		this.footLength = 15;
+		this.footLength = 10;
 		this.footWidth = 20;
+		this.handWidth = 40;
+		this.handLength = 10;
 		this.score = 0;
 		this.fitness = 0;
 		this.x = width * 0.10;
 		this.y = height * 0.75;
-		this.brain = new NeuralNetwork(10, 50, 4);
-		this.legBodyMuscleRestLength = Math.sqrt((this.backboneWidth * this.backboneWidth) + (this.upper_length * this.upper_length))
+		this.brain = new NeuralNetwork(20, 50, 6);
+		this.legBodyMuscleRestLength = Math.sqrt((this.backboneWidth * this.backboneWidth) + (this.upperLength * this.upperLength))
 
-		this.leftFoot = Matter.Bodies.rectangle(this.x + (this.footWidth / 2), this.y + this.upper_length + this.lower_length + this.backboneLength / 2, this.footWidth, this.footLength, {
+		this.leftHand = Matter.Bodies.rectangle(160, 455, this.handWidth, this.handLength, {
 			friction: 1,
-			restitution: 0.1,
+			slop: 0,
+			restitution: 0.01,
+			density: 0.1,
+			collisionFilter: {
+				category: 0x0002,
+				mask: 0x0001,
+			},
+			isStatic: staticVar,
+		});
+
+		this.rightHand = Matter.Bodies.rectangle(160, 455, this.handWidth, this.handLength, {
+			friction: 1,
+			slop: 0,
+			restitution: 0.01,
+			density: 0.1,
+			collisionFilter: {
+				category: 0x0002,
+				mask: 0x0001,
+			},
+			isStatic: staticVar,
+		});
+
+		this.leftFoot = Matter.Bodies.rectangle(153, 545, this.footWidth, this.footLength, {
+			friction: 1,
+			slop: 0,
+			restitution: 0.01,
+			density: 0.1,
+			collisionFilter: {
+				category: 0x0002,
+				mask: 0x0001,
+			},
+			isStatic: staticVar,
+		});
+
+		this.rightFoot = Matter.Bodies.rectangle(100, 535, this.footWidth, this.footLength, {
+			friction: 1,
+			slop: 0,
+			restitution: 0.01,
+			density: 0.1,
+			collisionFilter: {
+				category: 0x0002,
+				mask: 0x0001,
+			},
+			isStatic: staticVar,
+		});
+
+		this.upperRightLeg = Matter.Bodies.rectangle(130, 500, this.upperWidth, this.upperLength, {
+			friction: 1,
+			slop: 0,
+			restitution: 0.01,
 			density: 0.05,
 			collisionFilter: {
 				category: 0x0002,
@@ -30,42 +81,22 @@ class Leggy {
 			isStatic: staticVar,
 		});
 
-		this.rightFoot = Matter.Bodies.rectangle(this.x - (this.footWidth), this.y + this.upper_length + this.lower_length + this.backboneLength / 2, this.footWidth, this.footLength, {
-			friction: 1,
-			restitution: 0.1,
-			density: 0.05,
-			collisionFilter: {
-				category: 0x0002,
-				mask: 0x0001,
-			},
-			isStatic: staticVar,
-		});
-
-		this.upperRightLeg = Matter.Bodies.rectangle(this.x + (this.backboneWidth / 2), this.y + this.upper_length / 2 + this.backboneLength / 2, this.upper_width, this.upper_length, {
-			friction: 1,
-			restitution: 0.1,
-			density: 0.05,
-			collisionFilter: {
-				category: 0x0002,
-				mask: 0x0001,
-			},
-			isStatic: staticVar,
-		});
-
-		this.lowerRightLeg = Matter.Bodies.rectangle(this.x + (this.backboneWidth / 2), this.y + this.upper_length + this.backboneLength / 2 + this.lower_length / 2, this.lower_width, this.lower_length, {
+		this.lowerRightLeg = Matter.Bodies.rectangle(105, 525, this.lowerWidth, this.lowerLength, {
 			collisionFilter: {
 				category: 0x0002,
 				mask: 0x0001,
 			},
 			friction: 1,
+			slop: 0,
 			density: 0.05,
-			restitution: 0.1,
+			restitution: 0.01,
 			isStatic: staticVar,
 		});
 
-		this.upperLeftLeg = Matter.Bodies.rectangle(this.x + (this.backboneWidth /2), this.y + this.upper_length / 2 + this.backboneLength / 2, this.upper_width, this.upper_length, {
+		this.upperLeftLeg = Matter.Bodies.rectangle(148, 500, this.upperWidth, this.upperLength, {
 			friction: 1,
-			restitution: 0.1,
+			slop: 0,
+			restitution: 0.01,
 			isStatic: staticVar,
 			density: 0.05,
 			collisionFilter: {
@@ -74,26 +105,28 @@ class Leggy {
 			}
 		});
 
-		this.lowerLeftLeg = Matter.Bodies.rectangle(this.x + (this.backboneWidth / 2), this.y + this.upper_length + this.backboneLength / 2 + this.lower_length/2, this.lower_width, this.lower_length, {
+		this.lowerLeftLeg = Matter.Bodies.rectangle(150, 530, this.lowerWidth, this.lowerLength, {
 			friction: 1,
-			restitution: 0.1,
+			slop: 0,
+			restitution: 0.01,
 			density: 0.05,
 			isStatic: staticVar,
 			collisionFilter: {
 				category: 0x0004,
 				mask: 0x0001,
-			}
+			},
 		});
 
 		this.backbone = Matter.Bodies.rectangle(this.x, this.y, this.backboneWidth, this.backboneLength, {
 			friction: 1,
-			restitution: 0.1,
+			slop: 0,
+			restitution: 0.01,
 			density: 0.05,
 			// isStatic: true,
 			collisionFilter: {
 				category: 0x0004,
 				mask: 0x0001,
-			}
+			},
 		});
 
 		this.connectBones();
@@ -101,11 +134,30 @@ class Leggy {
 	}
 
 	connectBones() {
+
+		this.leftHandJoint = Matter.Constraint.create({
+			bodyA: this.backbone,
+			bodyB: this.leftHand,
+			pointA: { x: this.backboneWidth / 2, y: 0 },
+			pointB: { x: -this.handWidth / 2, y: 0 },
+			length: 0,
+			stiffness: 1,
+		});
+
+		this.rightHandJoint = Matter.Constraint.create({
+			bodyA: this.backbone,
+			bodyB: this.rightHand,
+			pointA: { x: this.backboneWidth / 2, y: 0 },
+			pointB: { x: -this.handWidth / 2, y: 0 },
+			length: 0,
+			stiffness: 1,
+		});
+
 		this.leftFootJoint = Matter.Constraint.create({
 			bodyA: this.leftFoot,
 			bodyB: this.lowerLeftLeg,
 			pointA: { x: -this.footWidth / 2, y: 0 },
-			pointB: { x: 0, y: this.lower_length / 2 },
+			pointB: { x: 0, y: this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
 		});
@@ -114,25 +166,25 @@ class Leggy {
 			bodyA: this.rightFoot,
 			bodyB: this.lowerRightLeg,
 			pointA: { x: -this.footWidth / 2, y: 0 },
-			pointB: { x: 0, y: this.lower_length / 2 },
+			pointB: { x: 0, y: this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
 		});
 
-		this.left_joint = Matter.Constraint.create({
+		this.leftLegJoint = Matter.Constraint.create({
 			bodyA: this.upperLeftLeg,
 			bodyB: this.lowerLeftLeg,
-			pointA: { x: 0, y: this.upper_length / 2 },
-			pointB: { x: 0, y: -this.upper_length / 2 },
+			pointA: { x: 0, y: this.upperLength / 2 },
+			pointB: { x: 0, y: -this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
 		});
 
-		this.right_joint = Matter.Constraint.create({
+		this.rightLegJoint = Matter.Constraint.create({
 			bodyA: this.upperRightLeg,
 			bodyB: this.lowerRightLeg,
-			pointA: { x: 0, y: this.upper_length / 2 },
-			pointB: { x: 0, y: -this.upper_length / 2 },
+			pointA: { x: 0, y: this.upperLength / 2 },
+			pointB: { x: 0, y: -this.lowerLength / 2 },
 			length: 0,
 			stiffness: 1,
 		});
@@ -141,7 +193,7 @@ class Leggy {
 			bodyA: this.backbone,
 			bodyB: this.upperLeftLeg,
 			pointA: { x: this.backboneWidth / 2, y: this.backboneLength / 2 },
-			pointB: { x: 0, y: -this.upper_length / 2 },
+			pointB: { x: 0, y: -this.upperLength / 2 },
 			length: 0,
 			stiffness: 1,
 		});
@@ -150,13 +202,35 @@ class Leggy {
 			bodyA: this.backbone,
 			bodyB: this.upperRightLeg,
 			pointA: { x: this.backboneWidth / 2, y: this.backboneLength / 2 },
-			pointB: { x: 0, y: -this.upper_length / 2 },
+			pointB: { x: 0, y: -this.upperLength / 2 },
 			length: 0,
 			stiffness: 1,
 		});
 	}
 
 	connectMuscles() {
+
+		this.leftHandMuscle = Matter.Constraint.create({
+			bodyA: this.backbone,
+			bodyB: this.leftHand,
+			length: 25,
+			pointA: { x: this.backboneWidth / 2, y: -this.backboneLength / 2 },
+			pointB: { x: 0, y: 0 },
+			stiffness: 1,
+			damping: 0,
+			render: { visible: false },
+		});
+
+		this.rightHandMuscle = Matter.Constraint.create({
+			bodyA: this.backbone,
+			bodyB: this.rightHand,
+			length: 25,
+			pointA: { x: this.backboneWidth / 2, y: -this.backboneLength / 2 },
+			pointB: { x: 0, y: 0 },
+			stiffness: 1,
+			damping: 0,
+			render: { visible: false },
+		});
 
 		this.leftFootMuscle = Matter.Constraint.create({
 			bodyA: this.leftFoot,
@@ -166,6 +240,7 @@ class Leggy {
 			pointB: { x: 0, y: 0 },
 			stiffness: 1,
 			damping: 0,
+			render: { visible: false },
 		});
 
 		this.rightFootMuscle = Matter.Constraint.create({
@@ -176,6 +251,7 @@ class Leggy {
 			pointB: { x: 0, y: 0 },
 			stiffness: 1,
 			damping: 0,
+			render: { visible: false },
 		});
 
 		this.bodyLeftLegMuscle = Matter.Constraint.create({
@@ -183,9 +259,10 @@ class Leggy {
 			bodyB: this.upperLeftLeg,
 			length: this.legBodyMuscleRestLength + 10,
 			pointA: { x: -this.backboneWidth / 2, y: this.backboneLength / 2 },
-			pointB: { x: 0, y: this.upper_length / 2 },
+			pointB: { x: 0, y: this.upperLength / 2 },
 			stiffness: 1,
 			damping: 0,
+			render: { visible: false },
 		});
 
 		this.bodyRightLegMuscle = Matter.Constraint.create({
@@ -193,27 +270,30 @@ class Leggy {
 			bodyB: this.upperRightLeg,
 			length: this.legBodyMuscleRestLength - 10,
 			pointA: { x: -this.backboneWidth / 2, y: this.backboneLength / 2 },
-			pointB: { x: 0, y: this.upper_length / 2 },
+			pointB: { x: 0, y: this.upperLength / 2 },
 			stiffness: 1,
 			damping: 0,
+			render: { visible: false },
 		});
 
-		this.left_muscle = Matter.Constraint.create({
+		this.leftMuscle = Matter.Constraint.create({
 			bodyA: this.upperLeftLeg,
 			bodyB: this.lowerLeftLeg,
-			pointB: { x: 0, y: this.lower_length / 2 },
-			length: (this.upper_length / 2) + this.lower_length,
+			pointB: { x: 0, y: this.lowerLength / 2 },
+			length: 45,
 			stiffness: 1,
 			damping: 0,
+			render: { visible: false },
 		});
 
-		this.right_muscle = Matter.Constraint.create({
+		this.rightMuscle = Matter.Constraint.create({
 			bodyA: this.upperRightLeg,
 			bodyB: this.lowerRightLeg,
-			pointB: { x: 0, y: this.lower_length / 2 },
-			length: (this.upper_length / 2) + this.lower_length,
+			pointB: { x: 0, y: this.lowerLength / 2 },
+			length: 45,
 			stiffness: 1,
 			damping: 0,
+			render: { visible: false },
 		});
 	}
 
@@ -226,16 +306,19 @@ class Leggy {
 		// Body Compmonents
 		Matter.World.add(world, [this.upperRightLeg, this.upperLeftLeg, this.lowerLeftLeg, this.lowerRightLeg]);
 		Matter.World.add(world, [this.backbone, this.leftFoot, this.rightFoot]);
+		Matter.World.add(world, [this.leftHand, this.rightHand]);
 
 		// Bones Joints
 		Matter.World.add(world, [this.rightMainJoint, this.leftMainJoint]);
-		Matter.World.add(world, [this.left_joint, this.right_joint]);
+		Matter.World.add(world, [this.leftLegJoint, this.rightLegJoint]);
 		Matter.World.add(world, [this.leftFootJoint, this.rightFootJoint]);
+		Matter.World.add(world, [this.leftHandJoint, this.rightHandJoint]);
 
 		// Muscles
-		Matter.World.add(world, [this.left_muscle, this.right_muscle]);
+		Matter.World.add(world, [this.leftMuscle, this.rightMuscle]);
 		Matter.World.add(world, [this.bodyLeftLegMuscle, this.bodyRightLegMuscle]);
 		Matter.World.add(world, [this.leftFootMuscle, this.rightFootMuscle]);
+		Matter.World.add(world, [this.leftHandMuscle, this.rightHandMuscle]);
 	}
 
 	/**
@@ -246,17 +329,19 @@ class Leggy {
 		// Body Compmonents
 		Matter.World.remove(world, [this.upperRightLeg, this.upperLeftLeg, this.lowerLeftLeg, this.lowerRightLeg]);
 		Matter.World.remove(world, [this.backbone, this.leftFoot, this.rightFoot]);
+		Matter.World.remove(world, [this.leftHand, this.rightHand]);
 
 		// Bones Joints
 		Matter.World.remove(world, [this.rightMainJoint, this.leftMainJoint]);
-		Matter.World.remove(world, [this.left_joint, this.right_joint]);
+		Matter.World.remove(world, [this.leftLegJoint, this.rightLegJoint]);
 		Matter.World.remove(world, [this.leftFootJoint, this.rightFootJoint]);
+		Matter.World.remove(world, [this.leftHandJoint, this.rightHandJoint]);
 
 		// Muscles
-		Matter.World.remove(world, [this.left_muscle, this.right_muscle]);
+		Matter.World.remove(world, [this.leftMuscle, this.rightMuscle]);
 		Matter.World.remove(world, [this.bodyLeftLegMuscle, this.bodyRightLegMuscle]);
 		Matter.World.remove(world, [this.leftFootMuscle, this.rightFootMuscle]);
-
+		Matter.World.remove(world, [this.leftHandMuscle, this.rightHandMuscle]);
 
 		// Dispose its brain
 		this.brain.dispose();
@@ -268,10 +353,10 @@ class Leggy {
    */
 	getParams() {
 		return Object.assign({}, {
-			upper_length: this.upper_length,
-			upper_width: this.upper_width,
-			lower_length: this.lower_length,
-			lower_width: this.lower_width,
+			upperLength: this.upperLength,
+			upperWidth: this.upperWidth,
+			lowerLength: this.lowerLength,
+			lowerWidth: this.lowerWidth,
 			backboneLength: this.backboneLength,
 			backboneWidth: this.backboneWidth,
 			x: this.x,
@@ -281,18 +366,18 @@ class Leggy {
 	}
 
 	adjustScore() {
-		const walkingScore = this.backbone.position.x// - this.backbone.positionPrev.x;
-		const isBackboneBalanced = Math.abs(this.backbone.angle) < 0.40;
+		const walkingScore = this.backbone.position.x - this.x;
+		const isBackboneBalanced = Math.abs(this.backbone.angle) <= 0.40;
 		const isLowerLeftLegBalanced = this.lowerLeftLeg.angle >= 0.4 && this.lowerLeftLeg.angle <= 1;
 		const isLowerRightLegBalanced = this.lowerRightLeg.angle >= 0.4 && this.lowerRightLeg.angle <= 1;
-		const isUpperLeftLegBalanced = Math.abs(this.lowerLeftLeg.angle) < 0.45;
-		const isUpperRightLegBalanced = Math.abs(this.lowerRightLeg.angle) < 0.45;
+		const isUpperLeftLegBalanced = Math.abs(this.lowerLeftLeg.angle) <= 0.45;
+		const isUpperRightLegBalanced = Math.abs(this.lowerRightLeg.angle) <= 0.45;
 		this.score += walkingScore
-			* (isLowerLeftLegBalanced && isUpperLeftLegBalanced ? 2 : 0.50)
+			* (isLowerLeftLegBalanced && isUpperLeftLegBalanced ? 1 : 0.1)
 			// * (isUpperLeftLegBalanced ? 2 : 0.50)
-			* (isLowerRightLegBalanced && isUpperRightLegBalanced? 2 : 0.50)
+			* (isLowerRightLegBalanced && isUpperRightLegBalanced ? 1 : 0.1)
 			// * (isUpperRightLegBalanced ? 2 : 0.50)
-			* (isBackboneBalanced ? 3 : 0.50)
+			* (isBackboneBalanced ? 2 : 0.05)
 	}
 
 	///////////////////////////
@@ -334,33 +419,38 @@ class Leggy {
 			angleLowerRighttLeg,
 			angleUpperRightLeg,
 			angleBackbone,
-			// vxLowerLeftLeg,
-			// vxUpperLeftLeg,
-			// vxLowerRighttLeg,
-			// vxUpperRightLeg,
-			// vxBackbone,
-			// vyLowerLeftLeg,
-			// vyUpperLeftLeg,
-			// vyLowerRightLeg,
-			// vyUpperRightLeg,
-			// vyBackbone,
+			vxLowerLeftLeg,
+			vxUpperLeftLeg,
+			vxLowerRighttLeg,
+			vxUpperRightLeg,
+			vxBackbone,
+			vyLowerLeftLeg,
+			vyUpperLeftLeg,
+			vyLowerRightLeg,
+			vyUpperRightLeg,
+			vyBackbone,
 		]);
 
 		// Move Muscles
-		const leftMuscleShift = result[0] > 0.5 ? 3 : -3;
-		const rightMuscleShift = result[1] > 0.5 ? 3 : -3;
-		const bodyLeftLegShift = result[2] > 0.5 ? 3 : -3;
-		const bodyRightLegShift = result[3] > 0.5 ? 3 : -3;
+		const leftMuscleShift = result[0] > 0.5 ? 2 : -2;
+		const rightMuscleShift = result[1] > 0.5 ? 2 : -2;
+		const bodyLeftLegShift = result[2] > 0.5 ? 2 : -2;
+		const bodyRightLegShift = result[3] > 0.5 ? 2 : -2;
+		const leftHandShift = result[4] > 0.5 ? 2 : -2;
+		const rightHandShift = result[5] > 0.5 ? 2 : -2;
 
-		if (this.left_muscle.length + leftMuscleShift <= 50 && this.left_muscle.length + leftMuscleShift >= 25)
-			this.left_muscle.length += leftMuscleShift;
-		if (this.right_muscle.length + rightMuscleShift <= 50 && this.right_muscle.length + rightMuscleShift >= 25)
-			this.right_muscle.length += rightMuscleShift;
+		if (this.leftMuscle.length + leftMuscleShift <= 45 && this.leftMuscle.length + leftMuscleShift >= 25)
+			this.leftMuscle.length += leftMuscleShift;
+		if (this.rightMuscle.length + rightMuscleShift <= 45 && this.rightMuscle.length + rightMuscleShift >= 25)
+			this.rightMuscle.length += rightMuscleShift;
 		if (this.bodyLeftLegMuscle.length + bodyLeftLegShift <= 60 && this.bodyLeftLegMuscle.length + bodyLeftLegShift >= 30)
 			this.bodyLeftLegMuscle.length += bodyLeftLegShift;
 		if (this.bodyRightLegMuscle.length + bodyRightLegShift <= 60 && this.bodyRightLegMuscle.length + bodyRightLegShift >= 30)
 			this.bodyRightLegMuscle.length += bodyRightLegShift;
-
+		if (this.leftHandMuscle.length + leftHandShift <= 30 && this.leftHandMuscle.length + leftHandShift >= 15)
+			this.leftHandMuscle.length += leftHandShift;
+		if (this.rightHandMuscle.length + rightHandShift <= 30 && this.rightHandMuscle.length + rightHandShift >= 15)
+			this.rightHandMuscle.length += rightHandShift;
 		// Adjust Score
 		this.adjustScore()
 	}

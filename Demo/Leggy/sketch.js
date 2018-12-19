@@ -6,8 +6,8 @@ let leftMuscleSlider, rightMuscleSlider, bodyLeftLegMuscleSlider, bodyRightLegMu
 
 function draw() {
 	background(54)
-	leggy.left_muscle.length = leftMuscleSlider.value();
-	leggy.right_muscle.length = rightMuscleSlider.value();
+	leggy.leftMuscle.length = leftMuscleSlider.value();
+	leggy.rightMuscle.length = rightMuscleSlider.value();
 	leggy.bodyLeftLegMuscle.length = bodyLeftLegMuscleSlider.value();
 	leggy.bodyRightLegMuscle.length = bodyRightLegMuscleSlider.value();
 
@@ -22,13 +22,13 @@ function draw() {
 	// Display Length
 	text('Body Left: ' + leggy.bodyLeftLegMuscle.length.toFixed(2), 0, height);
 	text('Body Right: ' + leggy.bodyRightLegMuscle.length.toFixed(2), 200, height);
-	text('Leg Left: ' + leggy.left_muscle.length.toFixed(2), 400, height);
-	text('Leg Right: ' + leggy.right_muscle.length.toFixed(2), 600, height);
+	text('Leg Left: ' + leggy.leftMuscle.length.toFixed(2), 400, height);
+	text('Leg Right: ' + leggy.rightMuscle.length.toFixed(2), 600, height);
 }
 
 function setup() {
 	fill(100);
-	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
+	let canvas = createCanvas(1240, 600);
 
 	// Initialize Generation
 	leggy = new Leggy();
@@ -44,7 +44,9 @@ function setup() {
 		engine: engine,
 		element: document.body,
 		options: {
-			height, width
+			width,
+			height,
+			wireframes: false,
 		}
 	});
 	Render.run(render);
@@ -62,8 +64,8 @@ function setup() {
 	}));
 
 	// Sliders
-	leftMuscleSlider = createSlider(25, 50, leggy.legBodyMuscleRestLength, 1);
-	rightMuscleSlider = createSlider(25, 50, leggy.legBodyMuscleRestLength, 1);
+	leftMuscleSlider = createSlider(25, 45, 45, 1);
+	rightMuscleSlider = createSlider(25, 45, 45, 1);
 	bodyLeftLegMuscleSlider = createSlider(30, 60, leggy.bodyLeftLegMuscle.length, 1);
 	bodyRightLegMuscleSlider = createSlider(30, 60, leggy.bodyRightLegMuscle.length, 1);
 
