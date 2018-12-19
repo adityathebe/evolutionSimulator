@@ -2,20 +2,36 @@ const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
 let leggy, boundary;
+let leftMuscleSlider, rightMuscleSlider, bodyLeftLegMuscleSlider, bodyRightLegMuscleSlider;
+
+function draw() {
+	background(54)
+	leggy.left_muscle.length = leftMuscleSlider.value();
+	leggy.right_muscle.length = rightMuscleSlider.value();
+	leggy.bodyLeftLegMuscle.length = bodyLeftLegMuscleSlider.value();
+	leggy.bodyRightLegMuscle.length = bodyRightLegMuscleSlider.value();
+
+	// Display Angle
+	textSize(20);
+	text('Lower Left: ' + leggy.lowerLeftLeg.angle.toFixed(2), 0, height * 0.95);
+	text('Upper Left: ' + leggy.upperLeftLeg.angle.toFixed(2), 200, height * 0.95);
+	text('Lower Right: ' + leggy.lowerRightLeg.angle.toFixed(2), 400, height * 0.95);
+	text('Upper Right: ' + leggy.upperRightLeg.angle.toFixed(2), 600, height * 0.95);
+	text('Backbone: ' + leggy.backbone.angle.toFixed(2), 800, height * 0.95 );
+
+	// Display Length
+	text('Body Left: ' + leggy.bodyLeftLegMuscle.length.toFixed(2), 0, height);
+	text('Body Right: ' + leggy.bodyRightLegMuscle.length.toFixed(2), 200, height);
+	text('Leg Left: ' + leggy.left_muscle.length.toFixed(2), 400, height);
+	text('Leg Right: ' + leggy.right_muscle.length.toFixed(2), 600, height);
+}
 
 function setup() {
+	fill(100);
 	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
 
 	// Initialize Generation
-	leggy = new Leggy({
-		upper_length: 60,
-		upper_width: 20,
-		lower_length: 50,
-		lower_width: 15,
-		x: width * 0.15,
-		y: height * 0.50,
-		id: 1
-	});
+	leggy = new Leggy();
 	leggy.addToWorld(world);
 
 	// Boundary
@@ -44,4 +60,11 @@ function setup() {
 	Matter.World.add(world, Matter.MouseConstraint.create(engine, {
 		mouse: renderMouse
 	}));
+
+	// Sliders
+	leftMuscleSlider = createSlider(25, 50, leggy.legBodyMuscleRestLength, 1);
+	rightMuscleSlider = createSlider(25, 50, leggy.legBodyMuscleRestLength, 1);
+	bodyLeftLegMuscleSlider = createSlider(30, 60, leggy.bodyLeftLegMuscle.length, 1);
+	bodyRightLegMuscleSlider = createSlider(30, 60, leggy.bodyRightLegMuscle.length, 1);
+
 }

@@ -1,12 +1,18 @@
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
+let bipedal, boundary;
+let slider;
+
+function draw() {
+	bipedal.leftMuscle.length = slider.value();
+}
 
 function setup() {
 	let canvas = createCanvas(windowWidth * 0.95, windowHeight * 0.95);
-
+	slider = createSlider(15, 70, 64, 1);
 	// Initialize Generation
-	const bipedal = new Bipedal({
+	bipedal = new BipedalRunner({
 		leftLegLength: 60,
 		rightLegLength: 60,
 		bodyLength: 100,
@@ -19,7 +25,7 @@ function setup() {
 	bipedal.addToWorld(world);
 
 	// Boundary
-	const boundary = new SimpleBoundary();
+	boundary = new SimpleBoundary();
 	boundary.addToWorld(world);
 
 	// Run Engine

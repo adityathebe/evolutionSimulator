@@ -4,14 +4,14 @@ let creatures = []
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
-const generationPeriod = 15;
+const generationPeriod = 25;
 let generation = new Generation(20);
 
 function setup() {
 	let canvas = createCanvas(windowWidth, windowHeight);
 
 	// Initialize Generation
-	generation.initialize(Bipedal);
+	generation.initialize(Leggy);
 	generation.species.forEach((creature) => { creature.addToWorld(world) });
 
 	// Boundary
@@ -22,8 +22,12 @@ function setup() {
 	Matter.Engine.run(engine);
 
 	// Restart Generation after certain seconds
+	let settled = false;
+	setTimeout(() => settled = true, 1000);
 	setInterval(() => {
+		settled = false;
 		generation.evolve();
+		setTimeout(() => settled = true, 1000);
 	}, generationPeriod * 1000);
 
 	// Run the renderer
@@ -48,10 +52,10 @@ function setup() {
 		mouse: renderMouse
 	}));
 
-	// Think every 50 ms
+	// Think every 80 ms
 	setInterval(() => {
 		generation.species.forEach((creature) => {
-			creature.think(boundary);
+			if (settled) creature.think(boundary);
 		});
-	}, 50)
+	}, 80)
 }

@@ -1,4 +1,4 @@
-class Bipedal {
+class BipedalRunner {
   constructor(params = {}) {
     this.id = params.id || 0;
     this.leftLegLength = params.leftLegLength || 60;
@@ -17,7 +17,7 @@ class Bipedal {
     // Body parts //
     ////////////////
     this.leftLeg = Matter.Bodies.rectangle(this.posX - 75, this.posY + 40, this.leftLegLength, this.leftLegWidth, {
-      friction: 0.8,
+      friction: 1,
       restitution: 0.1,
       density: 0.05,
       collisionFilter: {
@@ -28,7 +28,7 @@ class Bipedal {
     });
 
     this.rightLeg = Matter.Bodies.rectangle(this.posX + 80, this.posY + 40, this.rightLegLength, this.rightLegWidth, {
-      friction: 0.8,
+      friction: 1,
       restitution: 0.1,
       density: 0.05,
       collisionFilter: {
@@ -39,7 +39,7 @@ class Bipedal {
     });
 
     this.body = Matter.Bodies.rectangle(this.posX, this.posY, this.bodyLength, this.bodyWidth, {
-      friction: 0.8,
+      friction: 1,
       restitution: 0.1,
       density: 0.05,
       collisionFilter: {
@@ -142,7 +142,7 @@ class Bipedal {
   }
 
   clone() {
-    let bipedal = new Bipedal(this.getParams());
+    let bipedal = new BipedalRunner(this.getParams());
     bipedal.brain = this.brain.clone();
     return bipedal;
   }
@@ -187,12 +187,17 @@ class Bipedal {
     const result = this.brain.predict(input);
 
     // Move Muscles
-    let leftMuscleShift = result[0] > 0.5 ? 3 : -3;
-    let rightMuscleShift = result[1] > 0.5 ? 3 : -3;
+    let leftMuscleShift = result[0] > 0.5 ? 2 : -2;
+    let rightMuscleShift = result[1] > 0.5 ? 2 : -2;
 
-    if (this.leftMuscle.length < 70 && this.leftMuscle.length > 25)
+    if (leftMuscleShift < 0 && this.leftMuscle.length + leftMuscleShift > 25)
       this.leftMuscle.length += leftMuscleShift;
-    if (this.rightMuscle.length < 70 && this.rightMuscle.length > 25)
+    if (leftMuscleShift > 0 && this.leftMuscle.length + leftMuscleShift < 70)
+      this.leftMuscle.length += leftMuscleShift;
+
+    if (rightMuscleShift < 0 && this.rightMuscle.length + rightMuscleShift > 25)
+      this.rightMuscle.length += rightMuscleShift;
+    if (rightMuscleShift > 0 && this.rightMuscle.length + rightMuscleShift < 70)
       this.rightMuscle.length += rightMuscleShift;
 
     // Adjust Score

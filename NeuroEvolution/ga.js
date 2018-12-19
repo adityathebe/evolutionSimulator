@@ -84,6 +84,7 @@ class Generation {
     for (let i = 0; i < this.population; i++) {
       this.species[i].removeFromWorld(world);
       this.species[i].brain.dispose();
+      delete this.species[i];
     }
 
     // Add new children to the current generation
