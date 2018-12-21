@@ -143,6 +143,7 @@ class BipedalJumper {
 
   clone() {
     let bipedal = new BipedalJumper(this.getParams());
+    bipedal.brain.dispose();
     bipedal.brain = this.brain.clone();
     return bipedal;
   }

@@ -374,18 +374,18 @@ class Leggy {
 	}
 
 	adjustScore() {
-		const walkingScore = this.backbone.position.x - this.x;
+		const walkingScore = this.backbone.position.x;
 		const isBackboneBalanced = Math.abs(this.backbone.angle) <= 0.40;
-		const isLowerLeftLegBalanced = this.lowerLeftLeg.angle >= 0.4 && this.lowerLeftLeg.angle <= 1;
-		const isLowerRightLegBalanced = this.lowerRightLeg.angle >= 0.4 && this.lowerRightLeg.angle <= 1;
-		const isUpperLeftLegBalanced = Math.abs(this.lowerLeftLeg.angle) <= 0.45;
-		const isUpperRightLegBalanced = Math.abs(this.lowerRightLeg.angle) <= 0.45;
-		this.score += walkingScore
-			* (isLowerLeftLegBalanced && isUpperLeftLegBalanced ? 1 : 0.1)
-			// * (isUpperLeftLegBalanced ? 2 : 0.50)
-			* (isLowerRightLegBalanced && isUpperRightLegBalanced ? 1 : 0.1)
-			// * (isUpperRightLegBalanced ? 2 : 0.50)
-			* (isBackboneBalanced ? 2 : 0.05)
+		// const isLowerLeftLegBalanced = this.lowerLeftLeg.angle >= 0.4 && this.lowerLeftLeg.angle <= 1;
+		// const isLowerRightLegBalanced = this.lowerRightLeg.angle >= 0.4 && this.lowerRightLeg.angle <= 1;
+		// const isUpperLeftLegBalanced = Math.abs(this.lowerLeftLeg.angle) <= 0.45;
+		// const isUpperRightLegBalanced = Math.abs(this.lowerRightLeg.angle) <= 0.45;
+		this.score += walkingScore * (
+		// 	(isLowerLeftLegBalanced && isUpperLeftLegBalanced ? 1 : 0.5)
+		// 	+ (isLowerRightLegBalanced && isUpperRightLegBalanced ? 1 : 0.5)
+			+ (isBackboneBalanced ? 3 : 0.2)
+			+ (this.backbone.velocity.x > 0 ? 5 : 0)
+		)
 	}
 
 	///////////////////////////
@@ -440,12 +440,12 @@ class Leggy {
 		]);
 
 		// Move Muscles
-		const leftMuscleShift = result[0] > 0.5 ? 2 : -2;
-		const rightMuscleShift = result[1] > 0.5 ? 2 : -2;
-		const bodyLeftLegShift = result[2] > 0.5 ? 2 : -2;
-		const bodyRightLegShift = result[3] > 0.5 ? 2 : -2;
-		const leftHandShift = result[4] > 0.5 ? 2 : -2;
-		const rightHandShift = result[5] > 0.5 ? 1 : -1;
+		const leftMuscleShift = result[0] <= 0.5 ? 2 : -2;
+		const rightMuscleShift = result[1] <= 0.5 ? 2 : -2;
+		const bodyLeftLegShift = result[2] <= 0.5 ? 2 : -2;
+		const bodyRightLegShift = result[3] <= 0.5 ? 2 : -2;
+		const leftHandShift = result[4] <= 0.5 ? 2 : -2;
+		const rightHandShift = result[5] <= 0.5 ? 1 : -1;
 
 		if (this.leftMuscle.length + leftMuscleShift <= 45 && this.leftMuscle.length + leftMuscleShift >= 25)
 			this.leftMuscle.length += leftMuscleShift;
@@ -508,6 +508,7 @@ class Leggy {
 
 	clone() {
 		let leggy = new Leggy(this.getParams());
+		leggy.brain.dispose();
 		leggy.brain = this.brain.clone();
 		return leggy;
 	}

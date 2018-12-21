@@ -50,20 +50,17 @@ class Generation {
 
   evolve() {
 
-    // Store High Score
     this.generation += 1;
-    let gen_highscore = Math.max.apply(Math, this.species.map(o => o.score));
-    this.high_score = gen_highscore > this.high_score ? gen_highscore : this.high_score;
 
-    // Calculate Total Score of this Generation
-    let total_score = 0;
-    this.species.forEach((creature) => { total_score += creature.score });
+    // Calculate total Score of this Generation
+    let totalScore = 0;
+    this.species.forEach((creature) => { totalScore += creature.score });
 
     // Assign Fitness to each creature
-    this.progress = (total_score / this.population) - this.avg_score
-    this.avg_score = total_score / this.population;
+    // this.progress = (totalScore / this.population) - this.avg_score
+    // this.avg_score = totalScore / this.population;
     for (let i = 0; i < this.population; i++) {
-      this.species[i].fitness = this.species[i].score / total_score;
+      this.species[i].fitness = this.species[i].score / totalScore;
     };
 
     // Breeding
@@ -76,7 +73,9 @@ class Generation {
       child.id = i;
       new_generation.push(child);
 
-      console.log(`[${parentA.id}(${this.species[parentA.id].fitness.toFixed(2)}), ${parentB.id}(${this.species[parentB.id].fitness.toFixed(2)})] => ${i}`)
+      console.log(`[${parentA.id}(${this.species[parentA.id].fitness.toFixed(2)}), ${parentB.id}(${this.species[parentB.id].fitness.toFixed(2)})] => ${i}`);
+      parentA.brain.dispose();
+      parentB.brain.dispose();
     }
 
     // Kill Current Generation.
@@ -99,14 +98,14 @@ class Generation {
    * @returns {Creature}
    */
   getBest() {
-    let max = 0;
-    let max_index = 0;
+    let maxScore = 0;
+    let indexOfMaxScore = 0;
     this.species.forEach((creature, index) => {
-      if (max < creature.score) {
-        max = creature.score;
-        max_index = index;
+      if (maxScore < creature.score) {
+        maxScore = creature.score;
+        indexOfMaxScore = index;
       }
     });
-    return generation.species[max_index];
+    return generation.species[indexOfMaxScore];
   }
 }

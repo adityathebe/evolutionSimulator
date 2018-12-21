@@ -5,7 +5,7 @@ const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
 const generationPeriod = 20;
-let generation = new Generation(15);
+let generation = new Generation(20);
 
 function setup() {
 	let canvas = createCanvas(1240, 600);
