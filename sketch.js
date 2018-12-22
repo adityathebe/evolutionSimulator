@@ -11,7 +11,7 @@ function setup() {
 	let canvas = createCanvas(1240, 600);
 
 	// Initialize Generation
-	generation.initialize(Leggy);
+	generation.initialize(Person);
 	generation.species.forEach((creature) => { creature.addToWorld(world) });
 
 	// Boundary

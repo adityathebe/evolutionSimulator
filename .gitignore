@@ -1,4 +1,5 @@
 Backup
 creature.js
-Demo/Person
 Models/person.js
+Models/old-creature.js
+Models/leggy-jumper.js

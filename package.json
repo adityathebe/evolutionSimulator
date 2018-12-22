@@ -1,5 +1,5 @@
 {
-  "name": "EvolutionSimulator",
+  "name": "evolution-simulator",
   "version": "1.0.0",
   "description": "- [x] Neural Network\r - [x] Genetic Algorithm\r - [x] Physics Environment",
   "main": "sketch.js",

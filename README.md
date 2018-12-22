@@ -1,4 +1,8 @@
-# [DEMO](https://adityathebe.github.io/evolutionSimulator/)
+## Demo
+
+1. [DEMO](https://adityathebe.github.io/evolutionSimulator/)
+2. [Model - Bipedal](https://adityathebe.github.io/evolutionSimulator/Demo/Bipedal)
+2. [Model - Person](https://adityathebe.github.io/evolutionSimulator/Demo/Person)
     
 # Evolution Simulator [Under Development]
 
