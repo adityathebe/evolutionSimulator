@@ -4,7 +4,7 @@ let creatures = []
 const Render = Matter.Render
 const engine = Matter.Engine.create();
 const world = engine.world;
-const generationPeriod = 20;
+const generationPeriod = 25;
 let generation = new Generation(20);
 
 function setup() {
@@ -37,7 +37,7 @@ function setup() {
 		options: {
 			height, 
 			width,
-			wireframes: false,
+    // wireframes: false,
 		}
 	});
 	Render.run(render);
@@ -54,10 +54,10 @@ function setup() {
 		mouse: renderMouse
 	}));
 
-	// Think every 80 ms
+	// Think every 100 ms
 	setInterval(() => {
 		generation.species.forEach((creature) => {
 			if (hasCreatureSettled) creature.think(boundary);
 		});
-	}, 80)
+	}, 100)
 }

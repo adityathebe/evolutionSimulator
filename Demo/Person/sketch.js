@@ -31,7 +31,7 @@ function setup() {
 	let canvas = createCanvas(1240, 600);
 
 	// Initialize Generation
-	leggy = new Leggy();
+	leggy = new Person();
 	leggy.addToWorld(world);
 
 	// Boundary
@@ -46,7 +46,7 @@ function setup() {
 		options: {
 			width,
 			height,
-			wireframes: false,
+			// wireframes: false,
 		}
 	});
 	Render.run(render);
