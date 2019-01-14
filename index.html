@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
 	<title>Evolution Simulator</title>
+<body>
+	<div id="mainCanvas">
+	</div>
+
+	<div id="controllers">
+		<span>
+			<p style="display: inline">Simulation Speed</p>
+			<input id="simulationSlider" style="display: inline" type="range" min="0" max="20" step="1">
+		</span>
+	</div>
+
+
 	<!-- Libraries -->
 	<script src="lib/tf.js"></script>
 	<script src="lib/p5.js"></script>
 	<script src="lib/p5.dom.min.js"></script>
-	<script src="lib/matter.js"></script>
-
+	<script src="lib/box2d-min.js"></script>
+	
 	<!-- NeuroEvolution -->
 	<script src="NeuroEvolution/nn.js"></script>
 	<script src="NeuroEvolution/ga.js"></script>
-
-	<!-- Creature Models -->
-	<script src="Models/bipedal-jumper.js"></script>
-	<script src="Models/bipedal-runner.js"></script>
-	<script src="Models/person.js"></script>
-	<script src="Models/leggy-jumper.js"></script>
-
+	
 	<!-- Environments -->
-	<script src="Environments/simple-jump.js"></script>
-	<script src="Environments/simple-boundary.js"></script>
-
+	<script src="Environments/Floor.js"></script>
+	
+	<!-- Creature Models -->
+	<script src="Models/human.js"></script>
+	
 	<!-- Main Module -->
 	<script src="sketch.js"></script>
-<body>
 </body>
+
 </html>

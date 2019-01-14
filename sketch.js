@@ -1,63 +1,95 @@
-let boundary;
-let creatures = []
+const config = {
+	scale: 100,
+	maxTorque: 1200,
+	simulationSpeed: 1,
+	populationSize: 20,
+	canvas: {
+		width: 800,
+		height: 400,
+	},
+}
 
-const Render = Matter.Render
-const engine = Matter.Engine.create();
-const world = engine.world;
-const generationPeriod = 25;
-let generation = new Generation(20);
+const globals = {
+	world: null,
+	humans: [],
+}
+
+const setUpEnvironment = () => {
+
+	// Create World
+	const gravity = new b2.Vec2(0, 10);
+	const world = new b2.World(gravity, true);
+	globals.world = world;
+
+	// Create Floor
+	const floor = createFloor();
+	globals.floor = floor;
+
+	// Create Human
+	for (let i = 0; i < config.populationSize; i += 1) {
+		const aditya = new Human(2, 2.7);
+		globals.humans.push(aditya);
+	}
+
+}
+
+let floorImg = null;
+let bgImg = null
+function preload() {
+	floorImg = loadImage('ground.png');
+	bgImg = loadImage('bg.png');
+}
 
 function setup() {
-	let canvas = createCanvas(1240, 600);
+	const canvas = createCanvas(config.canvas.width, config.canvas.height);
+	canvas.parent('mainCanvas');
 
-	// Initialize Generation
-	generation.initialize(Person);
-	generation.species.forEach((creature) => { creature.addToWorld(world) });
+	rectMode(CENTER);
+	imageMode(CENTER);
 
-	// Boundary
-	boundary = new SimpleBoundary();
-	boundary.addToWorld(world);
+	setUpEnvironment();
+}
 
-	// Run Engine
-	Matter.Engine.run(engine);
+const simulationSlider = document.getElementById('simulationSlider');
+simulationSlider.value = config.simulationSpeed;
 
-	// Restart Generation after certain seconds
-	let hasCreatureSettled = false;
-	setTimeout(() => hasCreatureSettled = true, 1000);
-	setInterval(() => {
-		hasCreatureSettled = false;
-		generation.evolve();
-		setTimeout(() => hasCreatureSettled = true, 1000);
-	}, generationPeriod * 1000);
+function draw() {
+	// Run Simulation
+	config.simulationSpeed = simulationSlider.value;
+	for (let i = 0; i < config.simulationSpeed; i += 1) {
+		update();
+	}
 
-	// Run the renderer
-	let render = Render.create({
-		engine: engine,
-		element: document.body,
-		options: {
-			height, 
-			width,
-    // wireframes: false,
-		}
-	});
-	Render.run(render);
+	background(51);
+	scale(config.scale);
+	noStroke();
+	image(bgImg, 4, 1.68, bgImg.width / config.scale, bgImg.height / config.scale);
+	
+	// Display Humans
+	for (const human of globals.humans) {
+		human.display();
+	}
+	
+	// drawRect(globals.floor);
+	image(floorImg, 4, 4 + 0.1, floorImg.width / config.scale, floorImg.height / config.scale);
+}
 
-	// Mouse Constraint
-	let canvasMouse = Matter.Mouse.create(canvas.elt);
-	canvasMouse.pixelRatio = pixelDensity();
-	let m = Matter.MouseConstraint.create(engine, { mouse: canvasMouse });
-	Matter.World.add(world, m);
+function update() {
+	globals.world.Step(1 / 60, 8, 3);
+	globals.world.ClearForces();
+	for (const human of globals.humans) {
+		human.walk();
+	}
+};
 
-	let renderMouse = Matter.Mouse.create(render.canvas);
-	renderMouse.pixelRatio = pixelDensity();
-	Matter.World.add(world, Matter.MouseConstraint.create(engine, {
-		mouse: renderMouse
-	}));
 
-	// Think every 100 ms
-	setInterval(() => {
-		generation.species.forEach((creature) => {
-			if (hasCreatureSettled) creature.think(boundary);
-		});
-	}, 100)
+function drawRect(body) {
+	const fixture = body.GetFixtureList();
+	const shape = fixture.GetShape();
+	beginShape();
+	for (var i = 0; i < 4; i += 1) {
+		const { x, y } = body.GetWorldPoint(shape.m_vertices[i]);
+		vertex(x, y);
+	}
+	endShape();
 }
