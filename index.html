@@ -6,15 +6,28 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Evolution Simulator</title>
-<body>
-	<div id="mainCanvas">
-	</div>
+	<link rel="stylesheet" href="assets/style.css">
 
-	<div id="controllers">
-		<span>
-			<p style="display: inline">Simulation Speed</p>
-			<input id="simulationSlider" style="display: inline" type="range" min="0" max="20" step="1">
-		</span>
+<body>
+
+	<div id="wrapper">
+
+		<div id="mainCanvas"></div>
+
+		<!-- Display Stats -->
+		<div id="stats">
+			<table id="humanstats">
+			</table>
+		</div>
+
+		<!-- Controllers -->
+		<div id="controllers">
+			<div id="configs"></div>
+			<span>
+				<p style="display: inline">Simulation Speed</p>
+				<input id="simulationSlider" style="display: inline" type="range" value="1" min="0" max="20" step="1">
+			</span>
+		</div>
 	</div>
 
 
@@ -22,8 +35,9 @@
 	<script src="lib/p5.js"></script>
 	<script src="lib/p5.dom.min.js"></script>
 	<script src="lib/box2d-min.js"></script>
-	
+
 	<script src="src/ga.js"></script>
+	<script src="src/ui.js"></script>
 	<script src="src/floor.js"></script>
 	<script src="src/human.js"></script>
 	<script src="src/sketch.js"></script>

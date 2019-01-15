@@ -1,4 +1,5 @@
 const config = {
+	initialPosition: { x: 2.2, y: 2.5 },
 	scale: 100,
 	maxTorque: 1200,
 	simulationSpeed: 1,
@@ -21,26 +22,23 @@ const globals = {
 	humans: [],
 }
 
+let floorImg, bgImg;
+function preload() {
+	floorImg = loadImage('../assets/ground.png');
+	bgImg = loadImage('../assets/bg.png');
+}
+
 const setUpEnvironment = () => {
 
 	// Create World
 	const gravity = new b2.Vec2(0, 10);
-	const world = new b2.World(gravity, true);
-	globals.world = world;
+	globals.world = new b2.World(gravity, true);
 
 	// Create Floor
-	const floor = createFloor();
-	globals.floor = floor;
+	globals.floor = createFloor();
 
-	// Create Human
+	// Create Humans
 	GeneticAlgorithm.initializePopulation();
-}
-
-let floorImg = null;
-let bgImg = null
-function preload() {
-	floorImg = loadImage('../assets/ground.png');
-	bgImg = loadImage('../assets/bg.png');
 }
 
 function setup() {
@@ -58,13 +56,10 @@ function setup() {
 	}, 1000 * config.simulationPeriod)
 }
 
-const simulationSlider = document.getElementById('simulationSlider');
-simulationSlider.value = config.simulationSpeed;
-
 function draw() {
 
 	// Run Simulation
-	config.simulationSpeed = simulationSlider.value;
+	config.simulationSpeed = document.getElementById('simulationSlider').value;
 	for (let i = 0; i < config.simulationSpeed; i += 1) {
 		GeneticAlgorithm.simulateSingleStep();
 	}
@@ -81,6 +76,8 @@ function draw() {
 
 	// drawRect(globals.floor);
 	image(floorImg, 4, 4 + 0.1, floorImg.width / config.scale, floorImg.height / config.scale);
+
+	UIHandler.displayHumanStat();
 }
 
 function drawRect(body) {

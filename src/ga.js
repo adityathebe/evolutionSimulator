@@ -3,8 +3,9 @@ class GeneticAlgorithm {
 
   static initializePopulation() {
     globals.generationIndex = 1;
+    UIHandler.displayGenerationIndex();
     for (let i = 0; i < config.populationSize; i += 1) {
-      const human = new Human(2, 2.5);
+      const human = new Human(config.initialPosition.x, config.initialPosition.y);
       globals.humans.push(human);
     }
   }
@@ -51,6 +52,7 @@ class GeneticAlgorithm {
     // Add new set of humans to next generation
     globals.humans = newGeneration;
     globals.generationIndex += 1;
+    UIHandler.displayGenerationIndex();
   }
 
   static killGeneration() {
@@ -98,7 +100,7 @@ class GeneticAlgorithm {
       newGenome.push(newGene);
     }
     
-    const child = new Human(2, 2.5, newGenome);
+    const child = new Human(config.initialPosition.x, config.initialPosition.y, newGenome);
     return child;
   }
 }

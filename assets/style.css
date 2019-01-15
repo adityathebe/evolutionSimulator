@@ -1,0 +1,16 @@
+* { font-size: 14px; }
+		#wrapper { 
+			display: flex;
+		}
+
+		#mainCanvas { 
+			flex: 0 0 65%;
+		}
+
+		#stats{
+			flex: 1;
+		}
+
+		#controllers {
+			flex: 1;
+		}

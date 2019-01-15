@@ -108,6 +108,7 @@ class Human {
     const headHeightDelta = this.head.GetPosition().y;
     const footHeightDelta = Math.max(this.leftFoot.GetPosition().y, this.rightFoot.GetPosition().y);
     const bodyDelta = footHeightDelta - headHeightDelta;
+    this.bodyDelta = bodyDelta;
     const legDelta = this.rightFoot.GetPosition().x - this.leftFoot.GetPosition().x;
 
     if (bodyDelta > config.minBodyDelta) {
