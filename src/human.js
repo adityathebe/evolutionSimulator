@@ -18,7 +18,10 @@ class Human {
     this.joints = [];
     this.maxDistance = -100;
     this.score = 0;
+    this.isAlive = true;
     this.fitness = 0;
+    this.bodyDelta = 0;
+    this.legDelta = 0;
 
     // General Body Defintion
     this.bodyDef = new b2.BodyDef();
@@ -99,20 +102,20 @@ class Human {
     ];
   }
 
-  simulateStep() {
+  assignScore() {
     const currentMaxDistance = this.maxDistance;
     const currentDistance = this.torso.GetWorldCenter().x;
     const newMaxDistance = Math.max(currentMaxDistance, currentDistance);
 
-    // score
     const headHeightDelta = this.head.GetPosition().y;
     const footHeightDelta = Math.max(this.leftFoot.GetPosition().y, this.rightFoot.GetPosition().y);
-    const bodyDelta = footHeightDelta - headHeightDelta;
+    const bodyDelta = Math.abs(footHeightDelta - headHeightDelta);
     this.bodyDelta = bodyDelta;
     const legDelta = this.rightFoot.GetPosition().x - this.leftFoot.GetPosition().x;
+    this.legDelta = legDelta;
 
     if (bodyDelta > config.minBodyDelta) {
-      this.score += bodyDelta / 50;
+      this.score += bodyDelta;
       if (newMaxDistance > currentMaxDistance) {
         this.maxDistance = newMaxDistance;
         if (Math.abs(legDelta) > config.minLegDelta) {
@@ -230,8 +233,6 @@ class Human {
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
-
-    // == Limit Angles == //
     jointDef.enableLimit = true;
     jointDef.lowerAngle = -Math.PI / 10;
     jointDef.upperAngle = Math.PI / 10;
@@ -255,10 +256,8 @@ class Human {
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
-
-    // == Limit Angles == //
     jointDef.enableLimit = true;
-    jointDef.lowerAngle = -Math.PI / 1.5;
+    jointDef.lowerAngle = -Math.PI / 2;
     jointDef.upperAngle = 0;
     return globals.world.CreateJoint(jointDef);
   }
@@ -271,8 +270,6 @@ class Human {
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
-
-    // == Limit Angles == //
     jointDef.enableLimit = true;
     jointDef.lowerAngle = -Math.PI / 4;
     jointDef.upperAngle = Math.PI / 8;
@@ -287,11 +284,9 @@ class Human {
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
-
-    // == Limit Angles == //
     jointDef.enableLimit = true;
-    jointDef.lowerAngle = -Math.PI / 18;
-    jointDef.upperAngle = Math.PI / 10;
+    jointDef.lowerAngle = -Math.PI / 6;
+    jointDef.upperAngle = Math.PI / 6;
     return globals.world.CreateJoint(jointDef);
   }
 
@@ -303,8 +298,6 @@ class Human {
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
-
-    // == Limit Angles == //
     jointDef.enableLimit = true;
     jointDef.lowerAngle = 0.2;
     jointDef.upperAngle = 1.2;
@@ -319,9 +312,6 @@ class Human {
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
-    // jointDef.localAnchorB(foot.GetWorldCenter().x, foot.GetWorldCenter().y)
-
-    // == Limit Angles == //
     jointDef.enableLimit = true;
     jointDef.lowerAngle = -Math.PI / 4;
     jointDef.upperAngle = Math.PI / 8;

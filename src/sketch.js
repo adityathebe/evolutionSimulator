@@ -1,12 +1,12 @@
 const config = {
-	initialPosition: { x: 2.2, y: 2.5 },
+	initialPosition: { x: 1.5, y: 2.7 },
 	scale: 100,
-	maxTorque: 1200,
+	maxTorque: 800,
 	simulationSpeed: 1,
-	populationSize: 20,
-	simulationPeriod: 10,
+	populationSize: 25,
+	simulationPeriod: 15,
 	mutationRate: 0.05,
-	minBodyDelta: 1,
+	minBodyDelta: 1.1,
 	minLegDelta: 0.4,
 	motorNoise: 0.05,
 	canvas: {
@@ -49,20 +49,28 @@ function setup() {
 	imageMode(CENTER);
 
 	setUpEnvironment();
+	runAllSimulationIntervals();
+}
 
-	// Evolve
-	setInterval(() => {
+function runAllSimulationIntervals() {
+	// Evolve every <config.simulationPeriod> seconds
+	globals.evolutionInterval = setInterval(() => {
 		GeneticAlgorithm.createNextGeneration();
-	}, 1000 * config.simulationPeriod)
+	}, 1000 * config.simulationPeriod);
+
+	// Run Simulation
+	globals.simulationInterval = setInterval(() => {
+		config.simulationSpeed = document.getElementById('simulationSlider').value;
+		for (let i = 0; i < config.simulationSpeed; i += 1) {
+			GeneticAlgorithm.simulateSingleStep();
+		}
+	}, 1000 / 60);
+
+	// Show Stats
+	setInterval(UIHandler.displayHumanStat, 500);
 }
 
 function draw() {
-
-	// Run Simulation
-	config.simulationSpeed = document.getElementById('simulationSlider').value;
-	for (let i = 0; i < config.simulationSpeed; i += 1) {
-		GeneticAlgorithm.simulateSingleStep();
-	}
 
 	background(51);
 	scale(config.scale);
@@ -71,13 +79,14 @@ function draw() {
 
 	// Display Humans
 	for (const human of globals.humans) {
-		human.display();
+		if (human.isAlive) {
+			human.display();
+		}
 	}
 
 	// drawRect(globals.floor);
 	image(floorImg, 4, 4 + 0.1, floorImg.width / config.scale, floorImg.height / config.scale);
 
-	UIHandler.displayHumanStat();
 }
 
 function drawRect(body) {

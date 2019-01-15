@@ -5,15 +5,18 @@ class UIHandler {
     let index = 0;
 
     const head = table.insertRow(-1);
-    head.insertCell(0).innerHTML = "Human";
-    head.insertCell(1).innerHTML = "Score";
-    head.insertCell(2).innerHTML = "Body Delta";
+    head.insertCell(-1).innerHTML = "Human";
+    head.insertCell(-1).innerHTML = "Score";
+    head.style.fontWeight = "bold";
 
     for (const human of globals.humans) {
       const row = table.insertRow(-1);
-      row.insertCell(0).innerHTML = ++index;
-      row.insertCell(1).innerHTML = human.score.toFixed(2);
-      row.insertCell(2).innerHTML = human.bodyDelta.toFixed(2);
+      row.insertCell(-1).innerHTML = ++index;
+      row.insertCell(-1).innerHTML = human.score.toFixed(2);
+
+      if (human.isAlive === false) {
+        row.style.backgroundColor = "#e74c3c";
+      }
     }
   }
 

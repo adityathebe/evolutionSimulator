@@ -1,16 +1,30 @@
-* { font-size: 14px; }
-		#wrapper { 
-			display: flex;
-		}
+* {
+  font-size: 14px;
+}
 
-		#mainCanvas { 
-			flex: 0 0 65%;
-		}
+table,
+td,
+th {
+  border: 1px solid black;
+}
 
-		#stats{
-			flex: 1;
-		}
+table {
+  border-collapse: collapse;
+  width: 80%;
+}
 
-		#controllers {
-			flex: 1;
-		}
+#wrapper {
+  display: flex;
+}
+
+#mainCanvas {
+  flex: 0 0 65%;
+}
+
+#stats {
+  flex: 1;
+}
+
+#controllers {
+  flex: 1;
+}

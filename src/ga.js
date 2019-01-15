@@ -3,8 +3,10 @@ class GeneticAlgorithm {
 
   static initializePopulation() {
     globals.generationIndex = 1;
+    globals.aliveHumans = 0;
     UIHandler.displayGenerationIndex();
     for (let i = 0; i < config.populationSize; i += 1) {
+      globals.aliveHumans += 1;
       const human = new Human(config.initialPosition.x, config.initialPosition.y);
       globals.humans.push(human);
     }
@@ -13,9 +15,24 @@ class GeneticAlgorithm {
   static simulateSingleStep() {
     globals.world.Step(1 / 60, 8, 3);
     globals.world.ClearForces();
+
+    if (globals.aliveHumans === 0) {
+      clearInterval(globals.simulationInterval);
+      clearInterval(globals.evolutionInterval);
+      GeneticAlgorithm.createNextGeneration(); 
+      runAllSimulationIntervals();
+    }
+
     for (const human of globals.humans) {
-      human.walk(config.motorNoise);
-      human.simulateStep();
+      if (human.isAlive && human.torso.GetPosition().y >= 3.5) {
+        human.isAlive = false;
+        globals.aliveHumans -= 1;
+      }
+
+      if (human.isAlive) {
+        human.walk(config.motorNoise);
+        human.assignScore();
+      }
     }
     globals.stepCounter += 1;
   };
@@ -28,7 +45,6 @@ class GeneticAlgorithm {
   }
 
   static createNextGeneration() {
-
     // Evaluate Fitness
     GeneticAlgorithm.assignFitness();
 
@@ -52,11 +68,18 @@ class GeneticAlgorithm {
     // Add new set of humans to next generation
     globals.humans = newGeneration;
     globals.generationIndex += 1;
+    globals.stepCounter = 0;
+    globals.aliveHumans = newGeneration.length;
     UIHandler.displayGenerationIndex();
   }
 
   static killGeneration() {
     for (const human of globals.humans) {
+      if (human.isAlive) {
+        globals.isAlive -= 1;
+        human.isAlive = false;
+      }
+
       for (const bodyPart of human.bodyParts) {
         globals.world.DestroyBody(bodyPart);
       }
