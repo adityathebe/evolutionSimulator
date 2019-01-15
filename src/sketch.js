@@ -3,6 +3,11 @@ const config = {
 	maxTorque: 1200,
 	simulationSpeed: 1,
 	populationSize: 20,
+	simulationPeriod: 10,
+	mutationRate: 0.05,
+	minBodyDelta: 1,
+	minLegDelta: 0.4,
+	motorNoise: 0.05,
 	canvas: {
 		width: 800,
 		height: 400,
@@ -11,6 +16,8 @@ const config = {
 
 const globals = {
 	world: null,
+	stepCounter: 0,
+	generationIndex: -1,
 	humans: [],
 }
 
@@ -26,18 +33,14 @@ const setUpEnvironment = () => {
 	globals.floor = floor;
 
 	// Create Human
-	for (let i = 0; i < config.populationSize; i += 1) {
-		const aditya = new Human(2, 2.7);
-		globals.humans.push(aditya);
-	}
-
+	GeneticAlgorithm.initializePopulation();
 }
 
 let floorImg = null;
 let bgImg = null
 function preload() {
-	floorImg = loadImage('ground.png');
-	bgImg = loadImage('bg.png');
+	floorImg = loadImage('../assets/ground.png');
+	bgImg = loadImage('../assets/bg.png');
 }
 
 function setup() {
@@ -48,40 +51,37 @@ function setup() {
 	imageMode(CENTER);
 
 	setUpEnvironment();
+
+	// Evolve
+	setInterval(() => {
+		GeneticAlgorithm.createNextGeneration();
+	}, 1000 * config.simulationPeriod)
 }
 
 const simulationSlider = document.getElementById('simulationSlider');
 simulationSlider.value = config.simulationSpeed;
 
 function draw() {
+
 	// Run Simulation
 	config.simulationSpeed = simulationSlider.value;
 	for (let i = 0; i < config.simulationSpeed; i += 1) {
-		update();
+		GeneticAlgorithm.simulateSingleStep();
 	}
 
 	background(51);
 	scale(config.scale);
 	noStroke();
 	image(bgImg, 4, 1.68, bgImg.width / config.scale, bgImg.height / config.scale);
-	
+
 	// Display Humans
 	for (const human of globals.humans) {
 		human.display();
 	}
-	
+
 	// drawRect(globals.floor);
 	image(floorImg, 4, 4 + 0.1, floorImg.width / config.scale, floorImg.height / config.scale);
 }
-
-function update() {
-	globals.world.Step(1 / 60, 8, 3);
-	globals.world.ClearForces();
-	for (const human of globals.humans) {
-		human.walk();
-	}
-};
-
 
 function drawRect(body) {
 	const fixture = body.GetFixtureList();
