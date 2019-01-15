@@ -50,6 +50,9 @@ function setup() {
 
 	setUpEnvironment();
 	runAllSimulationIntervals();
+	
+	// Show Stats
+	setInterval(UIHandler.displayHumanStat, 500);
 }
 
 function runAllSimulationIntervals() {
@@ -65,9 +68,6 @@ function runAllSimulationIntervals() {
 			GeneticAlgorithm.simulateSingleStep();
 		}
 	}, 1000 / 60);
-
-	// Show Stats
-	setInterval(UIHandler.displayHumanStat, 500);
 }
 
 function draw() {
