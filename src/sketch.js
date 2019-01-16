@@ -20,6 +20,7 @@ const globals = {
 	stepCounter: 0,
 	generationIndex: -1,
 	humans: [],
+	generationHighScores: []
 }
 
 let floorImg, bgImg;

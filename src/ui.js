@@ -31,4 +31,44 @@ class UIHandler {
   static displayConfigs() {
 
   }
+
+  static displayChart() {
+    const labels = Array(globals.generationIndex).fill(null).map((x, i) => i)
+    const data = globals.generationHighScores.map(x => x.score);
+    var ctx = document.getElementById("chart").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Progress Chart',
+          data,
+          fill: false,
+        }],
+      },
+      options: {
+        responsive: true,
+        tooltips: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Generation'
+            }
+          }],
+          yAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Highest Score'
+            }
+          }]
+        }
+      }
+    });
+  }
 }

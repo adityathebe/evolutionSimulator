@@ -45,6 +45,12 @@ class GeneticAlgorithm {
   }
 
   static createNextGeneration() {
+
+    // Store Generation High score
+    const genHigh = globals.humans.reduce((a, b) => a.score > b.score ? { score: a.score } : { score: b.score })
+    globals.generationHighScores.push(genHigh);
+    UIHandler.displayChart();
+    
     // Evaluate Fitness
     GeneticAlgorithm.assignFitness();
 
