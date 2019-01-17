@@ -16,7 +16,8 @@ class Human {
     this.density = 500;
     this.genomes = [];
     this.joints = [];
-    this.maxDistance = -100;
+    this.maxDistance = x;
+    this.stepsMade = 0;
     this.score = 0;
     this.isAlive = true;
     this.fitness = 0;
@@ -50,57 +51,11 @@ class Human {
     } else {
       this.genome = this.createGenomes();
     }
-
   }
-
-  createBodyParts() {
-    this.head = this.createHead();
-    this.neck = this.createNeck();
-    this.torso = this.createTorso();
-    this.upperLeftLeg = this.createUpperLeg();
-    this.upperRightLeg = this.createUpperLeg();
-    this.lowerLeftLeg = this.createLowerLeg();
-    this.lowerRightLeg = this.createLowerLeg();
-    this.leftFoot = this.createFoot();
-    this.rightFoot = this.createFoot();
-    this.upperLeftArm = this.createUpperArm();
-    this.upperRightArm = this.createUpperArm();
-    this.lowerLeftArm = this.createLowerArm();
-    this.lowerRightArm = this.createLowerArm();
-
-    return [
-      this.head, this.neck, this.torso,
-      this.upperLeftArm, this.upperRightArm,
-      this.lowerLeftArm, this.lowerRightArm,
-      this.upperLeftLeg, this.upperRightLeg,
-      this.lowerLeftLeg, this.lowerRightLeg,
-      this.leftFoot, this.rightFoot,
-    ];
-  }
-
-  createBodyJoints() {
-    this.leftLegTorsoJoint = this.createLegTorsoJoint(this.upperLeftLeg);
-    this.rightLegTorsoJoint = this.createLegTorsoJoint(this.upperRightLeg);
-    this.leftLegJoint = this.createLegJoint(this.upperLeftLeg, this.lowerLeftLeg);
-    this.rightLegJoint = this.createLegJoint(this.upperRightLeg, this.lowerRightLeg);
-    this.leftFootJoint = this.createLegFootJoint(this.lowerLeftLeg, this.leftFoot);
-    this.rightFootJoint = this.createLegFootJoint(this.lowerRightLeg, this.rightFoot);
-    this.rightArmTorsoJoint = this.createArmTorsoJoint(this.upperRightArm);
-    this.leftArmTorsoJoint = this.createArmTorsoJoint(this.upperLeftArm);
-    this.leftArmJoint = this.createArmJoint(this.upperLeftArm, this.lowerLeftArm);
-    this.rightArmJoint = this.createArmJoint(this.upperRightArm, this.lowerRightArm);
-    this.neckTorsoJoint = this.createNeckTorsoJoint();
-    this.neckHeadJoint = this.createNeckHeadJoint();
-
-    return [
-      this.neckHeadJoint,
-      this.leftArmTorsoJoint, this.rightArmTorsoJoint,
-      this.leftLegTorsoJoint, this.rightLegTorsoJoint,
-      this.leftLegJoint, this.rightLegJoint,
-      this.leftFootJoint, this.rightFootJoint,
-      this.leftArmJoint, this.rightArmJoint,
-    ];
-  }
+  
+  //////////////////////////////////
+  // Simulation Related Functions //
+  //////////////////////////////////
 
   assignScore() {
     const currentMaxDistance = this.maxDistance;
@@ -109,24 +64,24 @@ class Human {
 
     const headHeightDelta = this.head.GetPosition().y;
     const footHeightDelta = Math.max(this.leftFoot.GetPosition().y, this.rightFoot.GetPosition().y);
-    const bodyDelta = Math.abs(footHeightDelta - headHeightDelta);
-    this.bodyDelta = bodyDelta;
-    const legDelta = this.rightFoot.GetPosition().x - this.leftFoot.GetPosition().x;
-    this.legDelta = legDelta;
+    this.bodyDelta = Math.abs(footHeightDelta - headHeightDelta);
+    this.legDelta = this.rightFoot.GetPosition().x - this.leftFoot.GetPosition().x;
 
-    if (bodyDelta > config.minBodyDelta) {
-      this.score += bodyDelta;
+    if (this.bodyDelta > config.minBodyDelta) {
       if (newMaxDistance > currentMaxDistance) {
+        this.score += this.bodyDelta / config.minBodyDelta;
         this.maxDistance = newMaxDistance;
-        if (Math.abs(legDelta) > config.minLegDelta) {
-          if (this.legDeltaSign === undefined) {
-            this.legDeltaSign = legDelta / Math.abs(legDelta);
-          } else if (this.legDeltaSign * legDelta < 0) {
-            this.legDeltaSign = legDelta / Math.abs(legDelta);
-            this.steps += 1;
-            this.score += this.maxDistance;
+        if (Math.abs(this.legDelta) > config.minLegDelta) {
+          if (!this.legDeltaSign) {
+            this.legDeltaSign = this.legDelta / Math.abs(this.legDelta);
+          } else if (this.legDeltaSign * this.legDelta < 0) {
+            this.legDeltaSign = this.legDelta / Math.abs(this.legDelta);
+            this.stepsMade += 1;
+            this.score += this.maxDistance + (this.stepsMade * 2000);
           }
         }
+      } else {
+        this.score -= (this.bodyDelta / config.minBodyDelta) * 0.05;
       }
     }
   }
@@ -155,6 +110,31 @@ class Human {
   ////////////
   // Bodies //
   ////////////
+
+  createBodyParts() {
+    this.head = this.createHead();
+    this.neck = this.createNeck();
+    this.torso = this.createTorso();
+    this.upperLeftLeg = this.createUpperLeg();
+    this.upperRightLeg = this.createUpperLeg();
+    this.lowerLeftLeg = this.createLowerLeg();
+    this.lowerRightLeg = this.createLowerLeg();
+    this.leftFoot = this.createFoot();
+    this.rightFoot = this.createFoot();
+    this.upperLeftArm = this.createUpperArm();
+    this.upperRightArm = this.createUpperArm();
+    this.lowerLeftArm = this.createLowerArm();
+    this.lowerRightArm = this.createLowerArm();
+
+    return [
+      this.head, this.neck, this.torso,
+      this.upperLeftArm, this.upperRightArm,
+      this.lowerLeftArm, this.lowerRightArm,
+      this.upperLeftLeg, this.upperRightLeg,
+      this.lowerLeftLeg, this.lowerRightLeg,
+      this.leftFoot, this.rightFoot,
+    ];
+  }
 
   createHead() {
     this.bodyDef.position.Set(this.x, this.y - (bodyDef.torso.height / 2) - (bodyDef.neck.height));
@@ -225,6 +205,30 @@ class Human {
   ////////////
   // Joints //
   ////////////
+
+  createBodyJoints() {
+    this.leftLegTorsoJoint = this.createLegTorsoJoint(this.upperLeftLeg);
+    this.rightLegTorsoJoint = this.createLegTorsoJoint(this.upperRightLeg);
+    this.leftLegJoint = this.createLegJoint(this.upperLeftLeg, this.lowerLeftLeg);
+    this.rightLegJoint = this.createLegJoint(this.upperRightLeg, this.lowerRightLeg);
+    this.leftFootJoint = this.createLegFootJoint(this.lowerLeftLeg, this.leftFoot);
+    this.rightFootJoint = this.createLegFootJoint(this.lowerRightLeg, this.rightFoot);
+    this.rightArmTorsoJoint = this.createArmTorsoJoint(this.upperRightArm);
+    this.leftArmTorsoJoint = this.createArmTorsoJoint(this.upperLeftArm);
+    this.leftArmJoint = this.createArmJoint(this.upperLeftArm, this.lowerLeftArm);
+    this.rightArmJoint = this.createArmJoint(this.upperRightArm, this.lowerRightArm);
+    this.neckTorsoJoint = this.createNeckTorsoJoint();
+    this.neckHeadJoint = this.createNeckHeadJoint();
+
+    return [
+      this.neckHeadJoint,
+      this.leftArmTorsoJoint, this.rightArmTorsoJoint,
+      this.leftLegTorsoJoint, this.rightLegTorsoJoint,
+      this.leftLegJoint, this.rightLegJoint,
+      this.leftFootJoint, this.rightFootJoint,
+      this.leftArmJoint, this.rightArmJoint,
+    ];
+  }
 
   createNeckHeadJoint() {
     const jointDef = new b2.RevoluteJointDef();
@@ -307,13 +311,13 @@ class Human {
   createLegFootJoint(lowerLeg, foot) {
     const jointDef = new b2.RevoluteJointDef();
     const anchorPoint = lowerLeg.GetWorldCenter().Clone();
-    anchorPoint.y += bodyDef.foot.height / 2;
+    anchorPoint.y += (bodyDef.foot.height / 2) + (bodyDef.lowerLeg.height / 2);
     jointDef.Initialize(lowerLeg, foot, anchorPoint);
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
     jointDef.enableLimit = true;
-    jointDef.lowerAngle = -Math.PI / 4;
+    jointDef.lowerAngle = -Math.PI / 8;
     jointDef.upperAngle = Math.PI / 8;
     return globals.world.CreateJoint(jointDef);
   }
