@@ -2,47 +2,47 @@
 <html>
 
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Evolution Simulator</title>
-	<link rel="stylesheet" href="assets/style.css">
-	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evolution Simulator</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
 <body>
 
-	<div id="wrapper">
+  <div id="wrapper">
 
-		<div id="mainCanvas"></div>
+    <div id="mainCanvas"></div>
 
-		<!-- Display Stats -->
-		<div id="stats">
-			<table id="humanstats">
-			</table>
-		</div>
+    <!-- Display Stats -->
+    <div id="stats">
+      <table id="humanstats">
+      </table>
+    </div>
 
-		<!-- Controllers -->
-		<div id="controllers">
-			<div id="configs"></div>
-			<span>
-				<p style="display: inline">Simulation Speed</p>
-				<input id="simulationSlider" style="display: inline" type="range" value="1" min="0" max="5" step="1">
-			</span>
-			<canvas id="chart"></canvas>
-		</div>
-	</div>
+    <!-- Controllers -->
+    <div id="controllers">
+      <div id="configs"></div>
+      <span>
+        <p style="display: inline">Simulation Speed</p>
+        <input id="simulationSlider" style="display: inline" type="range" value="1" min="0" max="5" step="1">
+      </span>
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
 
-	<!-- Libraries -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
-	<script src="lib/p5.js"></script>
-	<script src="lib/p5.dom.min.js"></script>
-	<script src="lib/box2d-min.js"></script>
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+  <script src="lib/p5.js"></script>
+  <script src="lib/p5.dom.min.js"></script>
+  <script src="lib/box2d-min.js"></script>
 
-	<script src="src/ga.js"></script>
-	<script src="src/ui.js"></script>
-	<script src="src/floor.js"></script>
-	<script src="src/human.js"></script>
-	<script src="src/sketch.js"></script>
+  <script src="src/ga.js"></script>
+  <script src="src/ui.js"></script>
+  <script src="src/floor.js"></script>
+  <script src="src/human.js"></script>
+  <script src="src/sketch.js"></script>
 </body>
 
 </html>
