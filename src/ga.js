@@ -20,7 +20,7 @@ class GeneticAlgorithm {
       clearInterval(globals.simulationInterval);
       clearInterval(globals.evolutionInterval);
       GeneticAlgorithm.createNextGeneration(); 
-      runAllSimulationIntervals();
+      GeneticAlgorithm.runAllSimulationIntervals();
     }
 
     for (const human of globals.humans) {
@@ -37,8 +37,21 @@ class GeneticAlgorithm {
     globals.stepCounter += 1;
   };
 
-  static assignFitness() {
-    const totalScore = globals.humans.reduce((acc, cur) => ({ score: acc.score + cur.score })).score;
+  static runAllSimulationIntervals() {
+    // Evolve every <config.simulationPeriod> seconds
+    globals.evolutionInterval = setInterval(() => {
+      GeneticAlgorithm.createNextGeneration();
+    }, 1000 * config.simulationPeriod / config.simulationSpeed);
+
+    // Run Simulation
+    globals.simulationInterval = setInterval(() => {
+      for (let i = 0; i < config.simulationSpeed; i += 1) {
+        GeneticAlgorithm.simulateSingleStep();
+      }
+    }, 1000 / 60);
+  }
+
+  static assignFitness(totalScore) {
     for (const human of globals.humans) {
       human.fitness = human.score / totalScore;
     }
@@ -47,12 +60,15 @@ class GeneticAlgorithm {
   static createNextGeneration() {
 
     // Store Generation High score
-    const genHigh = globals.humans.reduce((a, b) => a.score > b.score ? { score: a.score } : { score: b.score })
-    globals.generationHighScores.push(genHigh);
+    const totalScore = globals.humans.reduce((acc, cur) => ({ score: acc.score + cur.score })).score;
+    const genHighScore = globals.humans.reduce((a, b) => a.score > b.score ? { score: a.score } : { score: b.score });
+    const genAvgScore = totalScore / config.populationSize;
+    globals.generationHighScores.push(genHighScore);
+    globals.generationAvgScores.push(genAvgScore);
     UIHandler.displayChart();
     
     // Evaluate Fitness
-    GeneticAlgorithm.assignFitness();
+    GeneticAlgorithm.assignFitness(totalScore);
 
     // Create New Set of humans
     const newGeneration = [];

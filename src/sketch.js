@@ -3,11 +3,11 @@ const config = {
 	scale: 100,
 	maxTorque: 800,
 	simulationSpeed: 1,
-	populationSize: 25,
-	simulationPeriod: 15,
+	populationSize: 20,
+	simulationPeriod: 20,
 	mutationRate: 0.05,
-	minBodyDelta: 1.1,
-	minLegDelta: 0.4,
+	minBodyDelta: 1.2,
+	minLegDelta: 0.3,
 	motorNoise: 0.05,
 	canvas: {
 		width: 800,
@@ -20,7 +20,8 @@ const globals = {
 	stepCounter: 0,
 	generationIndex: -1,
 	humans: [],
-	generationHighScores: []
+	generationHighScores: [],
+	generationAvgScores: []
 }
 
 let floorImg, bgImg;
@@ -50,25 +51,10 @@ function setup() {
 	imageMode(CENTER);
 
 	setUpEnvironment();
-	runAllSimulationIntervals();
-	
+	GeneticAlgorithm.runAllSimulationIntervals();
+
 	// Show Stats
 	setInterval(UIHandler.displayHumanStat, 500);
-}
-
-function runAllSimulationIntervals() {
-	// Evolve every <config.simulationPeriod> seconds
-	globals.evolutionInterval = setInterval(() => {
-		GeneticAlgorithm.createNextGeneration();
-	}, 1000 * config.simulationPeriod);
-
-	// Run Simulation
-	globals.simulationInterval = setInterval(() => {
-		config.simulationSpeed = document.getElementById('simulationSlider').value;
-		for (let i = 0; i < config.simulationSpeed; i += 1) {
-			GeneticAlgorithm.simulateSingleStep();
-		}
-	}, 1000 / 60);
 }
 
 function draw() {
@@ -100,3 +86,13 @@ function drawRect(body) {
 	}
 	endShape();
 }
+
+const rangeInput = document.getElementById('simulationSlider');
+rangeInput.addEventListener("input", function (event) {
+	config.simulationSpeed = rangeInput.value;
+	clearInterval(globals.simulationInterval);
+	clearInterval(globals.evolutionInterval);
+	if (config.simulationSpeed > 0) {
+		GeneticAlgorithm.runAllSimulationIntervals();
+	}
+}, false);
