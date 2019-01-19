@@ -1,10 +1,16 @@
-
 class GeneticAlgorithm {
+
+  static useCustomGenome(customGenome) {
+    globals.humans.forEach((human) => {
+      human.genome = JSON.parse(JSON.stringify(customGenome));
+    });
+  }
 
   static initializePopulation() {
     globals.generationIndex = 1;
     globals.aliveHumans = 0;
-    UIHandler.displayGenerationIndex();
+    UIController.displayGenerationIndex();
+    UIController.displayBestHumanStats();
     for (let i = 0; i < config.populationSize; i += 1) {
       globals.aliveHumans += 1;
       const human = new Human(config.initialPosition.x, config.initialPosition.y);
@@ -19,7 +25,7 @@ class GeneticAlgorithm {
     if (globals.aliveHumans === 0) {
       clearInterval(globals.simulationInterval);
       clearInterval(globals.evolutionInterval);
-      GeneticAlgorithm.createNextGeneration(); 
+      GeneticAlgorithm.createNextGeneration();
       GeneticAlgorithm.runAllSimulationIntervals();
     }
 
@@ -61,12 +67,18 @@ class GeneticAlgorithm {
 
     // Store Generation High score
     const totalScore = globals.humans.reduce((acc, cur) => ({ score: acc.score + cur.score })).score;
-    const genHighScore = globals.humans.reduce((a, b) => a.score > b.score ? { score: a.score } : { score: b.score });
+    const genBestHuman = globals.humans.reduce((a, b) => a.score > b.score ? a : b);
+    const genHighScore = genBestHuman.score;
     const genAvgScore = totalScore / config.populationSize;
     globals.generationHighScores.push(genHighScore);
     globals.generationAvgScores.push(genAvgScore);
-    UIHandler.displayChart();
-    
+    UIController.displayChart();
+
+    // Store Best Human
+    if (genHighScore > globals.bestHuman.score) {
+      globals.bestHuman = genBestHuman;
+    }
+
     // Evaluate Fitness
     GeneticAlgorithm.assignFitness(totalScore);
 
@@ -92,7 +104,8 @@ class GeneticAlgorithm {
     globals.generationIndex += 1;
     globals.stepCounter = 0;
     globals.aliveHumans = newGeneration.length;
-    UIHandler.displayGenerationIndex();
+    UIController.displayGenerationIndex();
+    UIController.displayBestHumanStats();
   }
 
   static killGeneration() {
@@ -144,7 +157,7 @@ class GeneticAlgorithm {
       }
       newGenome.push(newGene);
     }
-    
+
     const child = new Human(config.initialPosition.x, config.initialPosition.y, newGenome);
     return child;
   }

@@ -21,7 +21,8 @@ const globals = {
   generationIndex: -1,
   humans: [],
   generationHighScores: [],
-  generationAvgScores: []
+  generationAvgScores: [],
+  bestHuman: { score: 0, stepsMade: 0 },
 }
 
 let floorImg, bgImg;
@@ -54,7 +55,7 @@ function setup() {
   GeneticAlgorithm.runAllSimulationIntervals();
 
   // Show Stats
-  setInterval(UIHandler.displayHumanStat, 500);
+  setInterval(UIController.displayHumanStat, 500);
 }
 
 function draw() {

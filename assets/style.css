@@ -14,8 +14,13 @@ table {
   width: 80%;
 }
 
+.row {
+  flex: 1
+}
+
 #wrapper {
   display: flex;
+  flex-direction: 'column';
 }
 
 #mainCanvas {

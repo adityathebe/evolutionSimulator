@@ -13,27 +13,33 @@
 
   <div id="wrapper">
 
-    <div id="mainCanvas"></div>
+    <div class='row'>
+      <div id="mainCanvas"></div>
 
-    <!-- Display Stats -->
-    <div id="stats">
-      <table id="humanstats">
-      </table>
-    </div>
+      <div id="simulationConfigs"></div>
+      <div id="bestHumanConfigs"></div>
 
-    <!-- Controllers -->
-    <div id="controllers">
-      <div id="configs"></div>
+      <div id="stats">
+        <table id="humanstats"></table>
+        <canvas id="chart"></canvas>
+      </div>
+    </div> <!-- First Row -->
+
+    <div class='row' id="controllers">
       <span>
         <p style="display: inline">Simulation Speed</p>
         <input id="simulationSlider" style="display: inline" type="range" value="1" min="0" max="5" step="1">
       </span>
-      <canvas id="chart"></canvas>
-    </div>
-  </div>
+
+      <button onclick="UIController.downloadBestGenome()">Download Best Genome</button>
+      <textarea id="userGenomeInput"></textarea>
+      <button onclick="UIController.uploadCustomGenome()">Upload Genome</button>
+    </div> <!-- Second Row -->
+
+  </div> <!-- Wrapper -->
 
   <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+  <script src="lib/chart.js"></script>
   <script src="lib/p5.js"></script>
   <script src="lib/p5.dom.min.js"></script>
   <script src="lib/box2d-min.js"></script>

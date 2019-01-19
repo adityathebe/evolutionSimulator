@@ -1,4 +1,17 @@
-class UIHandler {
+class UIController {
+
+  static uploadCustomGenome() {
+    const customGenome = JSON.parse(document.getElementById('userGenomeInput').value);
+    GeneticAlgorithm.useCustomGenome(customGenome);
+  }
+
+  static downloadBestGenome() {
+    if (globals.bestHuman.genome) {
+      const bestGenome = JSON.parse(JSON.stringify(globals.bestHuman.genome));
+      saveJSON(bestGenome, 'bestGenome.json');
+    }
+  }
+
   static displayHumanStat() {
     const table = document.getElementById('humanstats');
     table.innerHTML = ""
@@ -23,20 +36,26 @@ class UIHandler {
   }
 
   static displayGenerationIndex() {
-    document.getElementById("configs").innerHTML = "";
+    document.getElementById("simulationConfigs").innerHTML = "";
     const para = document.createElement("p");
     const node = document.createTextNode('Generation : ' + globals.generationIndex);
     para.appendChild(node);
-    document.getElementById("configs").appendChild(para);
+    document.getElementById("simulationConfigs").appendChild(para);
   }
 
-  static displayConfigs() {
-
+  static displayBestHumanStats() {
+    document.getElementById("bestHumanConfigs").innerHTML = "";
+    const para = document.createElement("p");
+    const bestScore = document.createTextNode('Best Score : ' + globals.bestHuman.score.toFixed(2));
+    const mostStepsMade = document.createTextNode('Most Steps : ' + globals.bestHuman.stepsMade);
+    para.appendChild(bestScore);
+    para.appendChild(mostStepsMade);
+    document.getElementById("bestHumanConfigs").appendChild(para);
   }
 
   static displayChart() {
     const labels = Array(globals.generationIndex).fill(null).map((x, i) => i + 1)
-    const highScoreData = globals.generationHighScores.map(x => x.score);
+    const highScoreData = globals.generationHighScores;
     const avgScoreData = globals.generationAvgScores;
     var ctx = document.getElementById("chart").getContext('2d');
     var myChart = new Chart(ctx, {
