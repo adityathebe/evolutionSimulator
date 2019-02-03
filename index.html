@@ -8,7 +8,8 @@
   <title>Evolution Simulator</title>
   <link rel="stylesheet" href="assets/style.css">
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-</head>
+  <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"> -->
+  
 
 <body>
 
@@ -19,23 +20,29 @@
 
       <div id="simulationConfigs"></div>
       <div id="bestHumanConfigs"></div>
+      <div class='row' id="controllers">
 
-      <div id="stats">
-        <table id="humanstats"></table>
-        <canvas id="chart"></canvas>
+        <span>
+          <p style="display: inline;"><strong>Simulation Speed</p>
+          <input id="simulationSlider" style="display: inline;" type="range" value="1" min="0" max="5" step="1">
+        </span>
+        <textarea id="userGenomeInput" placeholder="Upload Genome" cols="50" rows="2"></textarea>
+        <br />
+        <br />
+
+        <button class="button1" onclick="UIController.downloadBestGenome()">Download Best Genome</button>
+        <button class="button2" onclick="UIController.uploadCustomGenome()">Upload Genome</button>
+
       </div>
+
     </div> <!-- First Row -->
 
-    <div class='row' id="controllers">
-      <span>
-        <p style="display: inline">Simulation Speed</p>
-        <input id="simulationSlider" style="display: inline" type="range" value="1" min="0" max="5" step="1">
-      </span>
+    <canvas id="chart"></canvas>
 
-      <button onclick="UIController.downloadBestGenome()">Download Best Genome</button>
-      <textarea id="userGenomeInput"></textarea>
-      <button onclick="UIController.uploadCustomGenome()">Upload Genome</button>
-    </div> <!-- Second Row -->
+    <div id="stats">
+      <table id="humanstats"></table>
+    </div>
+    <!-- Second Row -->
 
   </div> <!-- Wrapper -->
 

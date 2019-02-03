@@ -46,11 +46,13 @@ class UIController {
   static displayBestHumanStats() {
     document.getElementById("bestHumanConfigs").innerHTML = "";
     const para = document.createElement("p");
+    const para1 = document.createElement("p");
     const bestScore = document.createTextNode('Best Score : ' + globals.bestHuman.score.toFixed(2));
     const mostStepsMade = document.createTextNode('Most Steps : ' + globals.bestHuman.stepsMade);
     para.appendChild(bestScore);
-    para.appendChild(mostStepsMade);
+    para1.appendChild(mostStepsMade);
     document.getElementById("bestHumanConfigs").appendChild(para);
+    document.getElementById("bestHumanConfigs").appendChild(para1);
   }
 
   static displayChart() {
