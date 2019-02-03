@@ -1,12 +1,12 @@
 const config = {
-  initialPosition: { x: 1.5, y: 2.7 },
+  initialPosition: { x: 1.5, y: 2.5 },
   scale: 100,
   maxTorque: 800,
   simulationSpeed: 1,
   populationSize: 20,
   simulationPeriod: 20,
   mutationRate: 0.05,
-  minBodyDelta: 1.2,
+  minBodyDelta: 1.4,
   minLegDelta: 0.3,
   motorNoise: 0.05,
   canvas: {
@@ -59,7 +59,6 @@ function setup() {
 }
 
 function draw() {
-
   background(51);
   scale(config.scale);
   noStroke();
@@ -74,7 +73,6 @@ function draw() {
 
   // drawRect(globals.floor);
   image(floorImg, 4, 4 + 0.1, floorImg.width / config.scale, floorImg.height / config.scale);
-
 }
 
 function drawRect(body) {
