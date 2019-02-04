@@ -27,8 +27,8 @@ const globals = {
 
 let floorImg, bgImg;
 function preload() {
-  floorImg = loadImage('../assets/ground.png');
-  bgImg = loadImage('../assets/bg.png');
+  floorImg = loadImage('https://raw.githubusercontent.com/adityathebe/evolutionSimulator/master/assets/ground.png');
+  bgImg = loadImage('https://raw.githubusercontent.com/adityathebe/evolutionSimulator/master/assets/bg.png');
 }
 
 const setUpEnvironment = () => {
