@@ -137,9 +137,9 @@ class GeneticAlgorithm {
     for (const gene of human.genome) {
       const randomNum = Math.random();
       if (randomNum < config.mutationRate) {
-        gene.timeFactor *= Math.random();
-        gene.cosFactor *= Math.random();
-        gene.timeShift *= Math.random();
+        gene.timeFactor = gene.timeFactor + (gene.timeFactor * Math.random());
+        gene.cosFactor = gene.cosFactor + (gene.cosFactor * Math.random());
+        gene.timeShift = gene.timeShift + (gene.timeShift * Math.random());
       }
     }
   }

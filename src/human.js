@@ -59,7 +59,7 @@ class Human {
     const shape = fixture.GetShape();
     for (var i = 0; i < 4; i += 1) {
       const { y } = body.GetWorldPoint(shape.m_vertices[i]);
-      if (y >= 3.82) return true;
+      if (y >= 3.80) return true;
     }
   }
 
@@ -312,7 +312,7 @@ class Human {
     jointDef.motorSpeed = 0;
     jointDef.enableMotor = true;
     jointDef.enableLimit = true;
-    jointDef.lowerAngle = -Math.PI / 18;
+    jointDef.lowerAngle = -Math.PI / 10;
     jointDef.upperAngle = Math.PI / 10;
     return globals.world.CreateJoint(jointDef);
   }
