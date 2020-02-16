@@ -84,7 +84,11 @@ class GeneticAlgorithm {
 
     // Create New Set of humans
     const newGeneration = [];
-    for (let i = 0; i < config.populationSize; i++) {
+    
+    //Elitism: add the clone of the best human to the new generation without mutations for faster neural network learning
+    newGeneration.push(new Human(config.initialPosition.x, config.initialPosition.y, genBestHuman.genome));
+
+    for (let i = 0; i < config.populationSize - 1; i++) {
       const parentA = GeneticAlgorithm.selectOne();
       const parentB = GeneticAlgorithm.selectOne();
 
@@ -122,15 +126,13 @@ class GeneticAlgorithm {
   }
 
   static selectOne() {
-    let index = 0;
-    let r = Math.random();
-    while (r > 0) {
-      r -= globals.humans[index].fitness;
-      index += 1;
-    }
-
-    index -= 1;
-    return globals.humans[index];
+    do {
+      let r = Math.random();
+      var betterHumans = globals.humans.filter(h => h.fitness > r);
+    } while (betterHumans.length == 0);
+    
+    let one = betterHumans[Math.floor(Math.random()*betterHumans.length)];
+    return one;
   }
 
   static mutate(human) {
