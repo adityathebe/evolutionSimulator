@@ -1,5 +1,5 @@
 const bodyDef = {
-  head: { height: 0.15, width: 0.20 },
+  head: { height: 0.15, width: 0.2 },
   neck: { height: 0.12, width: 0.1 },
   torso: { height: 0.5, width: 0.2 },
   hip: { height: 0.15, width: 0.2 },
@@ -8,7 +8,7 @@ const bodyDef = {
   upperLeg: { height: 0.4, width: 0.18 },
   lowerLeg: { height: 0.35, width: 0.12 },
   foot: { height: 0.1, width: 0.26 },
-}
+};
 
 class Human {
   constructor(x, y, genome) {
@@ -48,7 +48,7 @@ class Human {
 
     // Create genome based on number of joints
     if (genome) {
-      this.genome = JSON.parse(JSON.stringify(genome))
+      this.genome = JSON.parse(JSON.stringify(genome));
     } else {
       this.genome = this.createGenomes();
     }
@@ -59,7 +59,7 @@ class Human {
     const shape = fixture.GetShape();
     for (var i = 0; i < 4; i += 1) {
       const { y } = body.GetWorldPoint(shape.m_vertices[i]);
-      if (y >= 3.80) return true;
+      if (y >= 3.8) return true;
     }
   }
 
@@ -89,7 +89,7 @@ class Human {
             if (Human.isTouchingGround(this.leftFoot) && Human.isTouchingGround(this.rightFoot)) {
               this.legDeltaSign = this.legDelta / Math.abs(this.legDelta);
               this.stepsMade += 1;
-              this.score += this.maxDistance + (this.stepsMade * 2000);
+              this.score += this.maxDistance + this.stepsMade * 2000;
             }
           }
         }
@@ -109,12 +109,12 @@ class Human {
   }
 
   createGenomes() {
-    const genome = []
+    const genome = [];
     this.joints.forEach(() => {
       genome.push({
         cosFactor: 6 * Math.random() - 3,
         timeFactor: Math.random() / 10,
-        timeShift: Math.random() * Math.PI / 2,
+        timeShift: (Math.random() * Math.PI) / 2,
       });
     });
     return genome;
@@ -141,17 +141,25 @@ class Human {
     this.lowerRightArm = this.createLowerArm();
 
     return [
-      this.head, this.neck, this.torso, this.hip,
-      this.upperLeftArm, this.upperRightArm,
-      this.lowerLeftArm, this.lowerRightArm,
-      this.upperLeftLeg, this.upperRightLeg,
-      this.lowerLeftLeg, this.lowerRightLeg,
-      this.leftFoot, this.rightFoot,
+      this.head,
+      this.neck,
+      this.torso,
+      this.hip,
+      this.upperLeftArm,
+      this.upperRightArm,
+      this.lowerLeftArm,
+      this.lowerRightArm,
+      this.upperLeftLeg,
+      this.upperRightLeg,
+      this.lowerLeftLeg,
+      this.lowerRightLeg,
+      this.leftFoot,
+      this.rightFoot,
     ];
   }
 
   createHead() {
-    this.bodyDef.position.Set(this.x, this.y - (bodyDef.torso.height / 2) - (bodyDef.neck.height));
+    this.bodyDef.position.Set(this.x, this.y - bodyDef.torso.height / 2 - bodyDef.neck.height);
     const head = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.head.width / 2, bodyDef.head.height / 2);
     head.CreateFixture(this.fixtureDef);
@@ -159,7 +167,7 @@ class Human {
   }
 
   createNeck() {
-    this.bodyDef.position.Set(this.x, this.y - (bodyDef.torso.height / 2) - (bodyDef.neck.height / 2));
+    this.bodyDef.position.Set(this.x, this.y - bodyDef.torso.height / 2 - bodyDef.neck.height / 2);
     const neck = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.neck.width / 2, bodyDef.neck.height / 2);
     neck.CreateFixture(this.fixtureDef);
@@ -175,7 +183,7 @@ class Human {
   }
 
   createHip() {
-    this.bodyDef.position.Set(this.x, this.y + (bodyDef.torso.height / 2) + (bodyDef.hip.height / 2));
+    this.bodyDef.position.Set(this.x, this.y + bodyDef.torso.height / 2 + bodyDef.hip.height / 2);
     const hip = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.hip.width / 2, bodyDef.hip.height / 2);
     hip.CreateFixture(this.fixtureDef);
@@ -183,7 +191,7 @@ class Human {
   }
 
   createUpperArm() {
-    this.bodyDef.position.Set(this.x, this.y - (bodyDef.upperArm.height / 2));
+    this.bodyDef.position.Set(this.x, this.y - bodyDef.upperArm.height / 2);
     const upperArm = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.upperArm.width / 2, bodyDef.upperArm.height / 2);
     upperArm.CreateFixture(this.fixtureDef);
@@ -191,7 +199,7 @@ class Human {
   }
 
   createLowerArm() {
-    this.bodyDef.position.Set(this.x, this.y + (bodyDef.lowerArm.height / 2));
+    this.bodyDef.position.Set(this.x, this.y + bodyDef.lowerArm.height / 2);
     const lowerArm = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.lowerArm.width / 2, bodyDef.lowerArm.height / 2);
     lowerArm.CreateFixture(this.fixtureDef);
@@ -199,7 +207,10 @@ class Human {
   }
 
   createUpperLeg() {
-    this.bodyDef.position.Set(this.x, this.y + (bodyDef.torso.height / 2) + (bodyDef.hip.height) + (bodyDef.upperLeg.height / 2));
+    this.bodyDef.position.Set(
+      this.x,
+      this.y + bodyDef.torso.height / 2 + bodyDef.hip.height + bodyDef.upperLeg.height / 2
+    );
     const upperLeg = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.upperLeg.width / 2, bodyDef.upperLeg.height / 2);
     upperLeg.CreateFixture(this.fixtureDef);
@@ -207,7 +218,10 @@ class Human {
   }
 
   createLowerLeg() {
-    this.bodyDef.position.Set(this.x, this.y + (bodyDef.torso.height / 2) + (bodyDef.hip.height) + (bodyDef.upperLeg.height) + (bodyDef.lowerLeg.height / 2));
+    this.bodyDef.position.Set(
+      this.x,
+      this.y + bodyDef.torso.height / 2 + bodyDef.hip.height + bodyDef.upperLeg.height + bodyDef.lowerLeg.height / 2
+    );
     const upperLeg = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.lowerLeg.width / 2, bodyDef.lowerLeg.height / 2);
     upperLeg.CreateFixture(this.fixtureDef);
@@ -215,14 +229,20 @@ class Human {
   }
 
   createFoot() {
-    this.bodyDef.position.Set(this.x + 0.06,
-      this.y + (bodyDef.torso.height / 2) + (bodyDef.upperLeg.height) + (bodyDef.hip.height) + (bodyDef.lowerLeg.height) + (bodyDef.foot.height / 2));
+    this.bodyDef.position.Set(
+      this.x + 0.06,
+      this.y +
+        bodyDef.torso.height / 2 +
+        bodyDef.upperLeg.height +
+        bodyDef.hip.height +
+        bodyDef.lowerLeg.height +
+        bodyDef.foot.height / 2
+    );
     const upperLeg = globals.world.CreateBody(this.bodyDef);
     this.fixtureDef.shape.SetAsBox(bodyDef.foot.width / 2, bodyDef.foot.height / 2);
     upperLeg.CreateFixture(this.fixtureDef);
     return upperLeg;
   }
-
 
   ////////////
   // Joints //
@@ -244,12 +264,18 @@ class Human {
     this.neckHeadJoint = this.createNeckHeadJoint();
 
     return [
-      this.neckHeadJoint, this.hipTorsoJoint,
-      this.leftArmTorsoJoint, this.rightArmTorsoJoint,
-      this.leftLegHipJoint, this.rightLegHipJoint,
-      this.leftLegJoint, this.rightLegJoint,
-      this.leftFootJoint, this.rightFootJoint,
-      this.leftArmJoint, this.rightArmJoint,
+      this.neckHeadJoint,
+      this.hipTorsoJoint,
+      this.leftArmTorsoJoint,
+      this.rightArmTorsoJoint,
+      this.leftLegHipJoint,
+      this.rightLegHipJoint,
+      this.leftLegJoint,
+      this.rightLegJoint,
+      this.leftFootJoint,
+      this.rightFootJoint,
+      this.leftArmJoint,
+      this.rightArmJoint,
     ];
   }
 
@@ -348,7 +374,7 @@ class Human {
   createLegFootJoint(lowerLeg, foot) {
     const jointDef = new b2.RevoluteJointDef();
     const anchorPoint = lowerLeg.GetWorldCenter().Clone();
-    anchorPoint.y += (bodyDef.foot.height / 2) + (bodyDef.lowerLeg.height / 2);
+    anchorPoint.y += bodyDef.foot.height / 2 + bodyDef.lowerLeg.height / 2;
     jointDef.Initialize(lowerLeg, foot, anchorPoint);
     jointDef.maxMotorTorque = config.maxTorque;
     jointDef.motorSpeed = 0;
@@ -360,7 +386,6 @@ class Human {
   }
 
   display() {
-
     fill('#FA2F2E');
     drawRect(this.leftFoot);
     drawRect(this.upperLeftLeg);
@@ -368,7 +393,7 @@ class Human {
     drawRect(this.upperLeftArm);
     drawRect(this.lowerLeftArm);
 
-    fill('blue')
+    fill('blue');
     drawRect(this.neck);
     drawRect(this.torso);
     drawRect(this.head);
@@ -381,5 +406,4 @@ class Human {
     drawRect(this.upperRightArm);
     drawRect(this.lowerRightArm);
   }
-
 }

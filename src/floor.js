@@ -10,7 +10,7 @@ const createFloor = () => {
   floorFixDef.shape = new b2.PolygonShape();
   floorFixDef.shape.SetAsBox(4, 0.1);
 
-  const floor = globals.world.CreateBody(floorDef)
+  const floor = globals.world.CreateBody(floorDef);
   floor.CreateFixture(floorFixDef);
   return floor;
-}
+};

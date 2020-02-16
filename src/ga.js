@@ -1,7 +1,6 @@
 class GeneticAlgorithm {
-
   static useCustomGenome(customGenome) {
-    globals.humans.forEach((human) => {
+    globals.humans.forEach(human => {
       human.genome = JSON.parse(JSON.stringify(customGenome));
     });
   }
@@ -41,13 +40,13 @@ class GeneticAlgorithm {
       }
     }
     globals.stepCounter += 1;
-  };
+  }
 
   static runAllSimulationIntervals() {
     // Evolve every <config.simulationPeriod> seconds
     globals.evolutionInterval = setInterval(() => {
       GeneticAlgorithm.createNextGeneration();
-    }, 1000 * config.simulationPeriod / config.simulationSpeed);
+    }, (1000 * config.simulationPeriod) / config.simulationSpeed);
 
     // Run Simulation
     globals.simulationInterval = setInterval(() => {
@@ -64,10 +63,9 @@ class GeneticAlgorithm {
   }
 
   static createNextGeneration() {
-
     // Store Generation High score
     const totalScore = globals.humans.reduce((acc, cur) => ({ score: acc.score + cur.score })).score;
-    const genBestHuman = globals.humans.reduce((a, b) => a.score > b.score ? a : b);
+    const genBestHuman = globals.humans.reduce((a, b) => (a.score > b.score ? a : b));
     const genHighScore = genBestHuman.score;
     const genAvgScore = totalScore / config.populationSize;
     globals.generationHighScores.push(genHighScore);
@@ -84,8 +82,9 @@ class GeneticAlgorithm {
 
     // Create New Set of humans
     const newGeneration = [];
-    
-    //Elitism: add the clone of the best human to the new generation without mutations for faster neural network learning
+
+    // Elitism: add the clone of the best human to the new generation
+    // without mutations for faster neural network learning
     newGeneration.push(new Human(config.initialPosition.x, config.initialPosition.y, genBestHuman.genome));
 
     for (let i = 0; i < config.populationSize - 1; i++) {
@@ -130,8 +129,8 @@ class GeneticAlgorithm {
       let r = Math.random();
       var betterHumans = globals.humans.filter(h => h.fitness > r);
     } while (betterHumans.length == 0);
-    
-    let one = betterHumans[Math.floor(Math.random()*betterHumans.length)];
+
+    let one = betterHumans[Math.floor(Math.random() * betterHumans.length)];
     return one;
   }
 
@@ -139,9 +138,9 @@ class GeneticAlgorithm {
     for (const gene of human.genome) {
       const randomNum = Math.random();
       if (randomNum < config.mutationRate) {
-        gene.timeFactor = gene.timeFactor + (gene.timeFactor * Math.random());
-        gene.cosFactor = gene.cosFactor + (gene.cosFactor * Math.random());
-        gene.timeShift = gene.timeShift + (gene.timeShift * Math.random());
+        gene.timeFactor = gene.timeFactor + gene.timeFactor * Math.random();
+        gene.cosFactor = gene.cosFactor + gene.cosFactor * Math.random();
+        gene.timeShift = gene.timeShift + gene.timeShift * Math.random();
       }
     }
   }
@@ -156,7 +155,7 @@ class GeneticAlgorithm {
         cosFactor: parent.genome[i].cosFactor,
         timeShift: parent.genome[i].timeShift,
         timeFactor: parent.genome[i].timeFactor,
-      }
+      };
       newGenome.push(newGene);
     }
 

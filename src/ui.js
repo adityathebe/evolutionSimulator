@@ -1,5 +1,4 @@
 class UIController {
-
   static uploadCustomGenome() {
     const customGenome = JSON.parse(document.getElementById('userGenomeInput').value);
     GeneticAlgorithm.useCustomGenome(customGenome);
@@ -14,14 +13,14 @@ class UIController {
 
   static displayHumanStat() {
     const table = document.getElementById('humanstats');
-    table.innerHTML = ""
+    table.innerHTML = '';
     let index = 0;
 
     const head = table.insertRow(-1);
-    head.insertCell(-1).innerHTML = "Human";
-    head.insertCell(-1).innerHTML = "Score";
-    head.insertCell(-1).innerHTML = "Steps";
-    head.style.fontWeight = "bold";
+    head.insertCell(-1).innerHTML = 'Human';
+    head.insertCell(-1).innerHTML = 'Score';
+    head.insertCell(-1).innerHTML = 'Steps';
+    head.style.fontWeight = 'bold';
 
     for (const human of globals.humans) {
       const row = table.insertRow(-1);
@@ -30,59 +29,63 @@ class UIController {
       row.insertCell(-1).innerHTML = human.stepsMade;
 
       if (human.isAlive === false) {
-        row.style.backgroundColor = "#FF2748";
+        row.style.backgroundColor = '#FF2748';
       }
     }
   }
 
   static displayGenerationIndex() {
-    document.getElementById("simulationConfigs").innerHTML = "";
-    const para = document.createElement("p");
+    document.getElementById('simulationConfigs').innerHTML = '';
+    const para = document.createElement('p');
     const node = document.createTextNode('Generation : ' + globals.generationIndex);
     para.appendChild(node);
-    document.getElementById("simulationConfigs").appendChild(para);
+    document.getElementById('simulationConfigs').appendChild(para);
   }
 
   static displayBestHumanStats() {
-    document.getElementById("bestHumanConfigs").innerHTML = "";
-    const para = document.createElement("p");
-    const para1 = document.createElement("p");
+    document.getElementById('bestHumanConfigs').innerHTML = '';
+    const para = document.createElement('p');
+    const para1 = document.createElement('p');
     const bestScore = document.createTextNode('Best Score : ' + globals.bestHuman.score.toFixed(2));
     const mostStepsMade = document.createTextNode('Most Steps : ' + globals.bestHuman.stepsMade);
     para.appendChild(bestScore);
     para1.appendChild(mostStepsMade);
-    document.getElementById("bestHumanConfigs").appendChild(para);
-    document.getElementById("bestHumanConfigs").appendChild(para1);
+    document.getElementById('bestHumanConfigs').appendChild(para);
+    document.getElementById('bestHumanConfigs').appendChild(para1);
   }
 
   static displayChart() {
-    const labels = Array(globals.generationIndex).fill(null).map((x, i) => i + 1)
+    const labels = Array(globals.generationIndex)
+      .fill(null)
+      .map((x, i) => i + 1);
     const highScoreData = globals.generationHighScores;
     const avgScoreData = globals.generationAvgScores;
-    var ctx = document.getElementById("chart").getContext('2d');
+    var ctx = document.getElementById('chart').getContext('2d');
     var myChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels,
-        datasets: [{
-          label: 'High Score',
-          data: highScoreData,
-          fill: false,
-          borderColor: 'red',
-          backgroundColor: 'red',
-          borderDash: [3, 1],
-          pointRadius: 1,
-          pointHoverRadius: 3,
-        },
-        {
-          label: 'Average Score',
-          data: avgScoreData,
-          fill: true,
-          borderColor: '#2193EE',
-          backgroundColor: '#2193EE',
-          pointRadius: 0,
-          pointHoverRadius: 0,
-        }],
+        datasets: [
+          {
+            label: 'High Score',
+            data: highScoreData,
+            fill: false,
+            borderColor: 'red',
+            backgroundColor: 'red',
+            borderDash: [3, 1],
+            pointRadius: 1,
+            pointHoverRadius: 3,
+          },
+          {
+            label: 'Average Score',
+            data: avgScoreData,
+            fill: true,
+            borderColor: '#2193EE',
+            backgroundColor: '#2193EE',
+            pointRadius: 0,
+            pointHoverRadius: 0,
+          },
+        ],
       },
       options: {
         events: [], // Bug on chartJS /issues/3753
@@ -93,22 +96,26 @@ class UIController {
           intersect: false,
         },
         scales: {
-          xAxes: [{
-            display: true,
-            scaleLabel: {
+          xAxes: [
+            {
               display: true,
-              labelString: 'Generation'
-            }
-          }],
-          yAxes: [{
-            display: true,
-            scaleLabel: {
+              scaleLabel: {
+                display: true,
+                labelString: 'Generation',
+              },
+            },
+          ],
+          yAxes: [
+            {
               display: true,
-              labelString: 'Score'
-            }
-          }]
-        }
-      }
+              scaleLabel: {
+                display: true,
+                labelString: 'Score',
+              },
+            },
+          ],
+        },
+      },
     });
   }
 }
