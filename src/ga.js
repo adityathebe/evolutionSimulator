@@ -126,15 +126,13 @@ class GeneticAlgorithm {
   }
 
   static selectOne() {
-    let index = 0;
-    let r = Math.random();
-    while (r > 0) {
-      r -= globals.humans[index].fitness;
-      index += 1;
-    }
-
-    index -= 1;
-    return globals.humans[index];
+    do {
+      let r = Math.random();
+      var betterHumans = globals.humans.filter(h => h.fitness > r);
+    } while (betterHumans.length == 0);
+    
+    let one = betterHumans[Math.floor(Math.random()*betterHumans.length)];
+    return one;
   }
 
   static mutate(human) {
